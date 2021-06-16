@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script>
+        //라이브러리
+        annyang.start({
+            autoRestart : true,
+            continuous : true
+        })
+
+        var recognition = annyang.getSpeechRecognizer();
+        var final_transcript="";
+        recognition.interimResults = false;
+
+
+
+        recognition.onresult = function(event){
+            var interim_transcript = "";
+            final_transcript ="";
+            for(var i=event.resultIndex; i < event.results.length; ++i){
+                if(event.results[i].isFinal){
+                    final_transcript += event.results[i][0].transcript;
+                }
+
+            }
+            $("#view_msg").html(final_transcript);
+            $("#send_msg").val(final_transcript);
+
+            //ajax
+            $.ajax({
+                url:"/rank/movie",
+                type:"post",
+                dataType:"JSON",
+                data : $("form").serialize(),
+                success:function(json){
+                    var msgResult = "";
+                    for(var i =0; i<json.length; i++){
+                        msgResult += ("순위"+json[i].seq + "<br/>");
+                        msgResult += ("영화제목: "+json[i].movie_nm+"<br/>");
+                        msgResult += ("영화평점: "+json[i].score+"<br/>");
+                        msgResult += ("예매율: "+json[i].movie_reserve+"<br/>");
+                        msgResult += ("개봉일: "+json[i].open_day+"<br/>");
+                        msgResult += ("<hr/>");
+                    }
+                    $("#cgv_rank_list").html(msgResult);
+                }
+
+            })
+
+        };
+    </script>
+</head>
+<body>
+<h1>내가 말한 음성명령</h1>
+<hr/>
+<div id ="view_msg"></div>
+<br/>
+<h1>영화 순위 결과</h1>
+<hr/>
+<div id="cgv_rank_list"></div>
+<!--음성인식 전송폼-->
+<form name="form" method="post">
+    <input type="hidden" name="send_msg" id="send_msg"/>
+</form>
+</body>
+</html>

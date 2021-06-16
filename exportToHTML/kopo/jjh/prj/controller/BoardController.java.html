@@ -1,0 +1,886 @@
+<html>
+<head>
+<title>BoardController.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+.s4 { color: #6897bb;}
+.s5 { color: #629755; font-style: italic;}
+.s6 { color: #629755; font-weight: bold; font-style: italic;}
+.s7 { color: #77b767; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+BoardController.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">kopo.jjh.prj.controller</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.dto.BoardDto</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.dto.FileDto</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.security.domain.SimpleUserDAO</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.security.dto.AccountForm</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.security.dto.UrlBuilder</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.security.service.AccountService</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.service.BoardService</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.service.FileService</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.service.IMovieRankService</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.service.IMovieService</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.util.MD5Generator</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">lombok.extern.slf4j.Slf4j</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.apache.logging.log4j.LogManager</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.apache.logging.log4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.apache.tomcat.util.json.JSONParser</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.apache.tomcat.util.json.ParseException</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.json.simple.JSONArray</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.json.simple.JSONObject</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.jsoup.Jsoup</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.jsoup.nodes.Document</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.jsoup.nodes.Element</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.jsoup.select.Elements</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.beans.factory.annotation.Autowired</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.boot.autoconfigure.EnableAutoConfiguration</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.core.io.InputStreamResource</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.core.io.Resource</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.data.domain.Pageable</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.data.domain.Sort</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.data.web.PageableDefault</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.http.HttpHeaders</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.http.MediaType</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.http.ResponseEntity</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.mail.SimpleMailMessage</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.mail.javamail.JavaMailSender</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.security.access.prepost.PreAuthorize</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.security.authentication.UsernamePasswordAuthenticationToken</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.security.core.Authentication</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.security.core.GrantedAuthority</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.security.core.authority.SimpleGrantedAuthority</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.security.core.context.SecurityContextHolder</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.security.core.userdetails.User</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.stereotype.Controller</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.ui.Model</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.validation.BindingResult</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.web.bind.annotation.*</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.web.multipart.MultipartFile</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">javax.mail.MessagingException</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServletRequest</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServletResponse</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpSession</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.validation.Valid</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.io.*</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.math.BigInteger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.net.*</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.nio.file.Files</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.nio.file.Path</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.nio.file.Paths</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.security.SecureRandom</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.*</span><span class="s0">;</span>
+
+<span class="s1">@Controller</span>
+<span class="s1">@EnableAutoConfiguration</span>
+<span class="s1">@Slf4j</span>
+<span class="s0">public class </span><span class="s1">BoardController {</span>
+    <span class="s1">@Autowired</span>
+    <span class="s1">SimpleUserDAO sud</span><span class="s0">;</span>
+    <span class="s0">private </span><span class="s1">IMovieService movieService</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">Logger logger = LogManager.getLogger(BoardController.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+
+    <span class="s0">private final </span><span class="s1">AccountService accountService</span><span class="s0">;    </span><span class="s2">//회원가입 및 로그인</span>
+    <span class="s0">private </span><span class="s1">BoardService boardService</span><span class="s0">;  </span><span class="s2">//게시판</span>
+    <span class="s0">private </span><span class="s1">FileService fileService</span><span class="s0">;    </span><span class="s2">//파일업로드</span>
+    <span class="s0">private </span><span class="s1">IMovieRankService movieRankService</span><span class="s0">; </span><span class="s2">//강의</span>
+
+    <span class="s0">private </span><span class="s1">String CLIENT_ID = </span><span class="s3">&quot;3_gqaAGqIO5b4lLHXhrD&quot;</span><span class="s0">; </span><span class="s2">//애플리케이션 클라이언트 아이디값&quot;;</span>
+    <span class="s0">private </span><span class="s1">String CLI_SECRET = </span><span class="s3">&quot;DXqA0sX6q8&quot;</span><span class="s0">; </span><span class="s2">//애플리케이션 클라이언트 시크릿값&quot;;</span>
+    <span class="s0">private final </span><span class="s1">String REDIRECT_URI = </span><span class="s3">&quot;http://localhost:8080/user/login/callback&quot;</span><span class="s0">;</span>
+
+    <span class="s0">public </span><span class="s1">BoardController(AccountService accountService</span><span class="s0">, </span><span class="s1">BoardService boardService</span><span class="s0">, </span><span class="s1">FileService fileService</span><span class="s0">,  </span><span class="s1">IMovieService movieService</span><span class="s0">, </span><span class="s1">IMovieRankService movieRankService ) {</span>
+
+        <span class="s0">this</span><span class="s1">.accountService = accountService</span><span class="s0">;</span>
+        <span class="s0">this</span><span class="s1">.boardService = boardService</span><span class="s0">;</span>
+        <span class="s0">this</span><span class="s1">.fileService = fileService</span><span class="s0">;</span>
+
+        <span class="s0">this</span><span class="s1">.movieService = movieService</span><span class="s0">;</span>
+        <span class="s0">this</span><span class="s1">.movieRankService = movieRankService</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+<span class="s2">/* 
+    @GetMapping(&quot;list&quot;) 
+    public String list(Model model) { 
+        List&lt;BoardDto&gt; boardDtoList = boardService.getBoardList(); 
+        model.addAttribute(&quot;postList&quot;, boardDtoList); 
+        logger.info(&quot;글목록 실행&quot;); 
+ 
+ 
+        return &quot;board/list.html&quot;; 
+    } 
+ 
+ */</span>
+
+    <span class="s1">@RequestMapping(value=</span><span class="s3">&quot;joinConfirm&quot;</span><span class="s0">, </span><span class="s1">method= RequestMethod.GET)</span>
+    <span class="s0">public void </span><span class="s1">emailConfirm(@ModelAttribute(</span><span class="s3">&quot;form&quot;</span><span class="s1">) AccountForm form</span><span class="s0">, </span><span class="s1">Model model) </span><span class="s0">throws </span><span class="s1">Exception {</span>
+        <span class="s1">logger.info(form.getEmail() + </span><span class="s3">&quot;: auth confirmed&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">form.setAuthstatus(</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+       <span class="s1">accountService.updateAuthStatus(form)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;auth_check&quot;</span><span class="s0">, </span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+
+    <span class="s1">}</span>
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;list&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String list(Long id</span><span class="s0">, </span><span class="s1">Model model</span><span class="s0">,  </span><span class="s1">@RequestParam(value=</span><span class="s3">&quot;page&quot;</span><span class="s0">, </span><span class="s1">defaultValue = </span><span class="s3">&quot;1&quot;</span><span class="s1">) Integer pageNum) {</span>
+        <span class="s1">List&lt;BoardDto&gt; boardList = boardService.Boardlist(pageNum)</span><span class="s0">;</span>
+        <span class="s1">Integer[] pageList = boardService.getPageList(pageNum)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;boardList&quot;</span><span class="s0">,</span><span class="s1">boardList)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;pageList&quot;</span><span class="s0">, </span><span class="s1">pageList)</span><span class="s0">;</span>
+
+
+        <span class="s0">return </span><span class="s3">&quot;board/list.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;post&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String post() {</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;글쓰기페이지&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;board/post.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;chatting&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String chat() {</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;실시간채팅페이지,로그인해야됨&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;culture/chatting.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;passupdate&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String passupdate() {</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;비밀번호찾기페이지&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;user/login/passupdate.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@RequestMapping(</span><span class="s3">&quot;/naverlogin&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String loginForm(HttpSession session</span><span class="s0">, </span><span class="s1">Model model) </span><span class="s0">throws </span><span class="s1">UnsupportedEncodingException {</span>
+        <span class="s1">String apiURL = getNaverOAuthURI(session)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;naverApiURL&quot;</span><span class="s0">, </span><span class="s1">apiURL)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;/user/login/login-form.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@RequestMapping(</span><span class="s3">&quot;/loginWithoutForm/{username}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String loginWithoutForm(@PathVariable(value=</span><span class="s3">&quot;username&quot;</span><span class="s1">) String username) {</span>
+    <span class="s1">log.info(</span><span class="s3">&quot;자동로그인&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">String roleStr = </span><span class="s3">&quot;ROLE_&quot; </span><span class="s1">+ sud.getRolesByusername(username).toUpperCase()</span><span class="s0">;</span>
+        <span class="s1">List&lt;GrantedAuthority&gt; roles = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;(</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s2">//String roleStr = username.equals(&quot;admin&quot;) ? &quot;ROLE_ADMIN&quot; : &quot;ROLE_GUEST&quot;;</span>
+        <span class="s1">roles.add(</span><span class="s0">new </span><span class="s1">SimpleGrantedAuthority(roleStr))</span><span class="s0">;</span>
+        <span class="s1">User user = </span><span class="s0">new </span><span class="s1">User(username</span><span class="s0">, </span><span class="s3">&quot;&quot;</span><span class="s0">, </span><span class="s1">roles)</span><span class="s0">;</span>
+        <span class="s1">Authentication auth = </span><span class="s0">new </span><span class="s1">UsernamePasswordAuthenticationToken(user</span><span class="s0">, null, </span><span class="s1">roles)</span><span class="s0">;</span>
+        <span class="s1">SecurityContextHolder.getContext().setAuthentication(auth)</span><span class="s0">;</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;자동로그인끝났다&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;redirect:/&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s0">private </span><span class="s1">String getNaverOAuthURI(HttpSession session) </span><span class="s0">throws </span><span class="s1">UnsupportedEncodingException {</span>
+        <span class="s1">String redirectURI = URLEncoder.encode(REDIRECT_URI</span><span class="s0">, </span><span class="s3">&quot;UTF-8&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">SecureRandom random = </span><span class="s0">new </span><span class="s1">SecureRandom()</span><span class="s0">;</span>
+        <span class="s1">String state = </span><span class="s0">new </span><span class="s1">BigInteger(</span><span class="s4">130</span><span class="s0">, </span><span class="s1">random).toString()</span><span class="s0">;</span>
+
+        <span class="s1">UrlBuilder ub = </span><span class="s0">new </span><span class="s1">UrlBuilder(</span><span class="s3">&quot;https://nid.naver.com/oauth2.0/authorize&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">ub</span>
+                <span class="s1">.add(</span><span class="s3">&quot;response_type&quot;</span><span class="s0">, </span><span class="s3">&quot;code&quot;</span><span class="s1">)</span>
+                <span class="s1">.add(</span><span class="s3">&quot;client_id&quot;</span><span class="s0">, </span><span class="s1">CLIENT_ID)</span>
+                <span class="s1">.add(</span><span class="s3">&quot;redirect_uri&quot;</span><span class="s0">, </span><span class="s1">redirectURI)</span>
+                <span class="s1">.add(</span><span class="s3">&quot;state&quot;</span><span class="s0">, </span><span class="s1">state)</span><span class="s0">;</span>
+        <span class="s1">String apiURL = ub.toString()</span><span class="s0">;</span>
+        <span class="s1">session.setAttribute(</span><span class="s3">&quot;state&quot;</span><span class="s0">, </span><span class="s1">state)</span><span class="s0">;</span>
+
+        <span class="s0">return </span><span class="s1">apiURL</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;loginUser&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String createUserForm(Model model) {</span>
+        <span class="s2">//AccountForm ac=new AccountForm();</span>
+       <span class="s1">model.addAttribute(</span><span class="s3">&quot;userForm&quot;</span><span class="s0">, new </span><span class="s1">AccountForm())</span><span class="s0">;</span>
+
+        <span class="s2">//log.info(&quot;model:&quot;+model.toString());</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;회원가입페이지&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;user/login/register&quot;</span><span class="s0">;</span>
+
+    <span class="s1">}</span>
+
+    <span class="s1">@RequestMapping(</span><span class="s3">&quot;/idcheck.do&quot;</span><span class="s1">)</span>
+    <span class="s1">@ResponseBody</span>
+    <span class="s0">public </span><span class="s1">Map&lt;Object</span><span class="s0">, </span><span class="s1">Object&gt; idcheck(@RequestBody Long username_no) {</span>
+
+        <span class="s1">Map&lt;Object</span><span class="s0">, </span><span class="s1">Object&gt; map = </span><span class="s0">new </span><span class="s1">HashMap&lt;Object</span><span class="s0">, </span><span class="s1">Object&gt;()</span><span class="s0">;</span>
+
+        <span class="s1">AccountForm overlabCount = accountService.getoverlabCnt(username_no)</span><span class="s0">;</span>
+        <span class="s1">map.put(</span><span class="s3">&quot;overlabCount&quot;</span><span class="s0">, </span><span class="s1">overlabCount)</span><span class="s0">;</span>
+
+        <span class="s0">return </span><span class="s1">map</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s0">private </span><span class="s1">JavaMailSender javaMailSender</span><span class="s0">;</span>
+
+    <span class="s1">@RequestMapping(</span><span class="s3">&quot;/CheckMail&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">Map&lt;String</span><span class="s0">, </span><span class="s1">Object&gt; SendMail(String mail</span><span class="s0">, </span><span class="s1">HttpSession session) {</span>
+        <span class="s1">Map&lt;String</span><span class="s0">, </span><span class="s1">Object&gt; map = </span><span class="s0">new </span><span class="s1">HashMap&lt;&gt;()</span><span class="s0">;</span>
+        <span class="s1">Random random = </span><span class="s0">new </span><span class="s1">Random()</span><span class="s0">;</span>
+        <span class="s1">String key = </span><span class="s3">&quot;&quot;</span><span class="s0">;</span>
+
+        <span class="s1">SimpleMailMessage message = </span><span class="s0">new </span><span class="s1">SimpleMailMessage()</span><span class="s0">;</span>
+        <span class="s1">message.setTo(mail)</span><span class="s0">; </span><span class="s2">// 스크립트에서 보낸 메일을 받을 사용자 이메일 주소</span>
+        <span class="s2">// 입력 키를 위한 코드</span>
+        <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; </span><span class="s4">3</span><span class="s0">; </span><span class="s1">i++) {</span>
+            <span class="s0">int </span><span class="s1">index = random.nextInt(</span><span class="s4">25</span><span class="s1">) + </span><span class="s4">65</span><span class="s0">; </span><span class="s2">// A~Z까지 랜덤 알파벳 생성</span>
+            <span class="s1">key += (</span><span class="s0">char</span><span class="s1">) index</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">int </span><span class="s1">numIndex = random.nextInt(</span><span class="s4">8999</span><span class="s1">) + </span><span class="s4">1000</span><span class="s0">; </span><span class="s2">// 4자리 정수를 생성</span>
+        <span class="s1">key += numIndex</span><span class="s0">;</span>
+        <span class="s1">message.setSubject(</span><span class="s3">&quot;인증번호 입력을 위한 메일 전송&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">message.setText(</span><span class="s3">&quot;인증 번호 : &quot; </span><span class="s1">+ key)</span><span class="s0">;</span>
+        <span class="s1">javaMailSender.send(message)</span><span class="s0">;</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;message : &quot; </span><span class="s1">+ message)</span><span class="s0">;</span>
+        <span class="s1">map.put(</span><span class="s3">&quot;key&quot;</span><span class="s0">, </span><span class="s1">key)</span><span class="s0">;</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;key : &quot; </span><span class="s1">+ key)</span><span class="s0">;</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;메일전송완료&quot;</span><span class="s1">)</span><span class="s0">;</span>
+
+        <span class="s0">return </span><span class="s1">map</span><span class="s0">;</span>
+
+    <span class="s1">}</span>
+    <span class="s2">//파일업로드</span>
+    <span class="s1">@PostMapping(</span><span class="s3">&quot;post&quot;</span><span class="s1">)</span>
+
+    <span class="s0">public </span><span class="s1">String upload(@RequestParam(</span><span class="s3">&quot;file&quot;</span><span class="s1">) MultipartFile files</span><span class="s0">, </span><span class="s1">BoardDto boardDto</span><span class="s0">, int </span><span class="s1">hitCnt) {</span>
+
+        <span class="s1">log.info(</span><span class="s3">&quot;write함수&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">boardService.savePost(boardDto)</span><span class="s0">;</span>
+
+
+        <span class="s1">log.info(</span><span class="s3">&quot;파일업로드&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">String origFilename = files.getOriginalFilename()</span><span class="s0">;</span>
+            <span class="s1">String filename = </span><span class="s0">new </span><span class="s1">MD5Generator(origFilename).toString()</span><span class="s0">;</span>
+            <span class="s2">/* 실행되는 위치의 'files' 폴더에 파일이 저장됩니다. */</span>
+            <span class="s1">String savePath = System.getProperty(</span><span class="s3">&quot;user.dir&quot;</span><span class="s1">) + </span><span class="s3">&quot;</span><span class="s0">\\</span><span class="s3">files&quot;</span><span class="s0">;</span>
+            <span class="s2">/* 파일이 저장되는 폴더가 없으면 폴더를 생성합니다. */</span>
+            <span class="s0">if </span><span class="s1">(!</span><span class="s0">new </span><span class="s1">File(savePath).exists()) {</span>
+                <span class="s0">try </span><span class="s1">{</span>
+                    <span class="s0">new </span><span class="s1">File(savePath).mkdir()</span><span class="s0">;</span>
+                <span class="s1">} </span><span class="s0">catch </span><span class="s1">(Exception e) {</span>
+                    <span class="s1">e.getStackTrace()</span><span class="s0">;</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+            <span class="s1">String filePath = savePath + </span><span class="s3">&quot;</span><span class="s0">\\</span><span class="s3">&quot; </span><span class="s1">+ filename</span><span class="s0">;</span>
+            <span class="s1">files.transferTo(</span><span class="s0">new </span><span class="s1">File(filePath))</span><span class="s0">;</span>
+
+            <span class="s1">FileDto fileDto = </span><span class="s0">new </span><span class="s1">FileDto()</span><span class="s0">;</span>
+            <span class="s1">fileDto.setOrigFilename(origFilename)</span><span class="s0">;</span>
+            <span class="s1">fileDto.setFilename(filename)</span><span class="s0">;</span>
+            <span class="s1">fileDto.setFilePath(filePath)</span><span class="s0">;</span>
+
+            <span class="s1">Long fileId = fileService.saveFile(fileDto)</span><span class="s0">;</span>
+            <span class="s1">boardDto.setFileId(fileId)</span><span class="s0">;</span>
+            <span class="s1">boardService.savePost(boardDto)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(Exception e) {</span>
+            <span class="s1">e.printStackTrace()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s3">&quot;redirect:/list&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;userlist&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String userlist(Long username_no</span><span class="s0">, </span><span class="s1">Model model</span><span class="s0">, </span><span class="s1">@PageableDefault(size = </span><span class="s4">10</span><span class="s0">, </span><span class="s1">sort = </span><span class="s3">&quot;username_no&quot;</span><span class="s0">, </span><span class="s1">direction = Sort.Direction.DESC) Pageable pageable) {</span>
+
+
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;userList&quot;</span><span class="s0">, </span><span class="s1">accountService.getuserList(pageable))</span><span class="s0">;</span>
+
+
+        <span class="s0">return </span><span class="s3">&quot;user/userlist.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@PreAuthorize(</span><span class="s3">&quot;hasRole('ROLE_ADMIN')&quot;</span><span class="s1">)</span>
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;user/{username_no}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String userdetail(@PathVariable(</span><span class="s3">&quot;username_no&quot;</span><span class="s1">) Long username_no</span><span class="s0">, </span><span class="s1">Model model) {</span>
+        <span class="s1">AccountForm accountForm = accountService.gethomeCnt(username_no)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;af&quot;</span><span class="s0">, </span><span class="s1">accountForm)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;user/userdetail.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;user/useredit/{username_no}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String useredit(@PathVariable(</span><span class="s3">&quot;username_no&quot;</span><span class="s1">) Long username_no</span><span class="s0">, </span><span class="s1">Model model) {</span>
+        <span class="s1">AccountForm accountForm = accountService.gethomeCnt(username_no)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;af&quot;</span><span class="s0">, </span><span class="s1">accountForm)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;user/useredit.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@PutMapping(</span><span class="s3">&quot;user/useredit/{username_no}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String updateUser(@PathVariable Long username_no</span><span class="s0">, </span><span class="s1">AccountForm accountForm){</span>
+
+        <span class="s1">accountService.updateUser(username_no</span><span class="s0">, </span><span class="s1">accountForm)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;redirect:/userlist&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+
+    <span class="s1">@DeleteMapping(</span><span class="s3">&quot;user/{username_no}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String delete(@PathVariable(</span><span class="s3">&quot;username_no&quot;</span><span class="s1">) </span><span class="s0">long </span><span class="s1">username_no) {</span>
+       <span class="s1">accountService.delete(username_no)</span><span class="s0">;</span>
+
+
+        <span class="s0">return </span><span class="s3">&quot;redirect:/userlist&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;post/{id}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String detail(@PathVariable(</span><span class="s3">&quot;id&quot;</span><span class="s1">) Long id</span><span class="s0">, </span><span class="s1">Model model) {</span>
+        <span class="s1">BoardDto boardDto = boardService.getPost(id)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;post&quot;</span><span class="s0">, </span><span class="s1">boardDto)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;board/detail.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;post/edit/{id}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String edit(@PathVariable(</span><span class="s3">&quot;id&quot;</span><span class="s1">) Long id</span><span class="s0">, </span><span class="s1">Model model) {</span>
+        <span class="s1">BoardDto boardDto = boardService.getPost(id)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;post&quot;</span><span class="s0">, </span><span class="s1">boardDto)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;board/edit.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@PutMapping(</span><span class="s3">&quot;post/edit/{id}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String update(BoardDto boardDto) {</span>
+        <span class="s1">boardService.savePost(boardDto)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;redirect:/list&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@DeleteMapping(</span><span class="s3">&quot;post/{id}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String delete(@PathVariable(</span><span class="s3">&quot;id&quot;</span><span class="s1">) Long id) {</span>
+        <span class="s1">boardService.deletePost(id)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;redirect:/list&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;download/{fileId}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">ResponseEntity&lt;Resource&gt; fileDownload(@PathVariable(</span><span class="s3">&quot;fileId&quot;</span><span class="s1">) Long fileId) </span><span class="s0">throws </span><span class="s1">IOException {</span>
+        <span class="s1">FileDto fileDto = fileService.getFile(fileId)</span><span class="s0">;</span>
+        <span class="s1">Path path = Paths.get(fileDto.getFilePath())</span><span class="s0">;</span>
+        <span class="s1">Resource resource = </span><span class="s0">new </span><span class="s1">InputStreamResource(Files.newInputStream(path))</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">ResponseEntity.ok()</span>
+                <span class="s1">.contentType(MediaType.parseMediaType(</span><span class="s3">&quot;application/octet-stream&quot;</span><span class="s1">))</span>
+                <span class="s1">.header(HttpHeaders.CONTENT_DISPOSITION</span><span class="s0">, </span><span class="s3">&quot;attachment; filename=</span><span class="s0">\&quot;</span><span class="s3">&quot; </span><span class="s1">+ fileDto.getOrigFilename() + </span><span class="s3">&quot;</span><span class="s0">\&quot;</span><span class="s3">&quot;</span><span class="s1">)</span>
+                <span class="s1">.body(resource)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+
+
+
+
+    <span class="s0">public </span><span class="s1">JSONObject exchange() {</span>
+        <span class="s1">JSONObject result = </span><span class="s0">new </span><span class="s1">JSONObject()</span><span class="s0">;</span>
+        <span class="s1">JSONArray arr = </span><span class="s0">new </span><span class="s1">JSONArray()</span><span class="s0">;</span>
+
+        <span class="s2">// 네이버 환율정보 페이지</span>
+        <span class="s1">String url = </span><span class="s3">&quot;https://finance.naver.com/marketindex/exchangeList.nhn&quot;</span><span class="s0">;</span>
+        <span class="s1">Document doc = </span><span class="s0">null;</span>
+
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s2">// 환율정보 스크래핑</span>
+            <span class="s1">doc = Jsoup.connect(url).get()</span><span class="s0">;</span>
+            <span class="s2">// 국가명, 환율</span>
+            <span class="s1">Elements country = doc.select(</span><span class="s3">&quot;.tit&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">Elements sale = doc.select(</span><span class="s3">&quot;.sale&quot;</span><span class="s1">)</span><span class="s0">;</span>
+
+            <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; </span><span class="s4">3</span><span class="s0">; </span><span class="s1">i++) {</span>
+
+                <span class="s1">Element country_el = country.get(i)</span><span class="s0">;</span>
+                <span class="s1">Element sale_el = sale.get(i)</span><span class="s0">;</span>
+                <span class="s1">JSONObject obj = </span><span class="s0">new </span><span class="s1">JSONObject()</span><span class="s0">;</span>
+
+                <span class="s1">obj.put(</span><span class="s3">&quot;상대원화&quot;</span><span class="s0">, </span><span class="s1">country_el.text())</span><span class="s0">;</span>
+                <span class="s1">obj.put(</span><span class="s3">&quot;한화&quot;</span><span class="s0">, </span><span class="s1">sale_el.text())</span><span class="s0">;</span>
+                <span class="s1">arr.add(obj)</span><span class="s0">;</span>
+
+            <span class="s1">}</span>
+            <span class="s1">result.put(</span><span class="s3">&quot;환율&quot;</span><span class="s0">, </span><span class="s1">arr)</span><span class="s0">;</span>
+
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(IOException e) {</span>
+
+            <span class="s1">result.put(</span><span class="s3">&quot;result&quot;</span><span class="s0">, </span><span class="s3">&quot;서버가 불안정합니다&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">e.printStackTrace()</span><span class="s0">;</span>
+
+        <span class="s1">}</span>
+
+        <span class="s0">return </span><span class="s1">result</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;exchange&quot;</span><span class="s1">)</span>
+    <span class="s1">@ResponseBody</span>
+    <span class="s1">@CrossOrigin</span>
+    <span class="s0">public </span><span class="s1">JSONObject sendExchange(BoardController c_service) </span><span class="s0">throws </span><span class="s1">Exception {</span>
+
+        <span class="s0">return </span><span class="s1">c_service.exchange()</span><span class="s0">;</span>
+
+    <span class="s1">}</span>
+
+
+
+
+    <span class="s0">public </span><span class="s1">JSONObject news() {</span>
+        <span class="s1">JSONObject result = </span><span class="s0">new </span><span class="s1">JSONObject()</span><span class="s0">;</span>
+        <span class="s1">JSONArray arr = </span><span class="s0">new </span><span class="s1">JSONArray()</span><span class="s0">;</span>
+
+        <span class="s2">// 일본뉴스페이지</span>
+        <span class="s1">String url = </span><span class="s3">&quot;https://learn.dict.naver.com/jpdic/today/conversation.nhn&quot;</span><span class="s0">;</span>
+        <span class="s1">Document doc = </span><span class="s0">null;</span>
+
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s2">// 환율정보 스크래핑</span>
+            <span class="s1">doc = Jsoup.connect(url).get()</span><span class="s0">;</span>
+            <span class="s2">// 국가명, 환율</span>
+            <span class="s1">Elements themess = doc.select(</span><span class="s3">&quot;.kr_tit&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s2">//큰제목</span>
+            <span class="s1">Elements summaryy = doc.select(</span><span class="s3">&quot;.jp_tit&quot;</span><span class="s1">)</span><span class="s0">;       </span><span class="s2">//요약</span>
+
+
+
+                <span class="s1">Element theme = themess.get(</span><span class="s4">0</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s1">Element summary = summaryy.get(</span><span class="s4">0</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s1">JSONObject obj = </span><span class="s0">new </span><span class="s1">JSONObject()</span><span class="s0">;</span>
+
+                <span class="s1">obj.put(</span><span class="s3">&quot;theme&quot;</span><span class="s0">, </span><span class="s1">themess.text())</span><span class="s0">;</span>
+                <span class="s1">obj.put(</span><span class="s3">&quot;summary&quot;</span><span class="s0">, </span><span class="s1">summaryy.text())</span><span class="s0">;</span>
+                <span class="s1">arr.add(obj)</span><span class="s0">;</span>
+
+
+            <span class="s1">result.put(</span><span class="s3">&quot;items&quot;</span><span class="s0">, </span><span class="s1">arr)</span><span class="s0">;     </span><span class="s2">//items</span>
+
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(IOException e) {</span>
+
+            <span class="s1">result.put(</span><span class="s3">&quot;result&quot;</span><span class="s0">, </span><span class="s3">&quot;서버가 불안정합니다&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">e.printStackTrace()</span><span class="s0">;</span>
+
+        <span class="s1">}</span>
+
+        <span class="s0">return </span><span class="s1">result</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;news&quot;</span><span class="s1">)</span>
+    <span class="s1">@ResponseBody</span>
+    <span class="s1">@CrossOrigin</span>
+    <span class="s0">public </span><span class="s1">JSONObject sendnews(BoardController b_service) </span><span class="s0">throws </span><span class="s1">Exception {</span>
+
+        <span class="s0">return </span><span class="s1">b_service.news()</span><span class="s0">;</span>
+
+    <span class="s1">}</span>
+
+
+
+
+<span class="s2">//redis 연동예제</span>
+<span class="s2">/* 
+ 
+    @RequestMapping(value = &quot;myRedis/text&quot;) 
+    @ResponseBody 
+    public String myRedis(HttpServletRequest request, HttpServletResponse response) throws Exception { 
+ 
+        log.info(this.getClass().getName() + &quot;myRedis Start&quot;); 
+ 
+        myRedisServcie.doSaveData(); 
+        log.info(this.getClass().getName() + &quot;myRedis end&quot;); 
+ 
+        return &quot;success&quot;; 
+    } 
+ 
+ 
+ */</span>
+
+
+
+
+
+
+
+    <span class="s2">//로그인예제</span>
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;user&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String dispUser(Model model) {</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;home controller&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;/user/user&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+<span class="s1">@GetMapping(</span><span class="s3">&quot;/login&quot;</span><span class="s1">)</span>
+<span class="s0">public </span><span class="s1">String login(){</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;로그인페이지&quot;</span><span class="s1">)</span><span class="s0">;</span>
+    <span class="s0">return </span><span class="s3">&quot;user/login/login&quot;</span><span class="s0">;</span>
+<span class="s1">}</span>
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;/book&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String oobks(){</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;책장사&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;culture/book&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;/travel&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String travel(){</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;여행사이트&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;culture/travel&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;logout&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String logout(HttpServletRequest request</span><span class="s0">, </span><span class="s1">HttpServletResponse response) {</span>
+        <span class="s1">Authentication authentication = SecurityContextHolder.getContext().getAuthentication()</span><span class="s0">;</span>
+
+        <span class="s0">if </span><span class="s1">(authentication != </span><span class="s0">null</span><span class="s1">) {</span>
+            <span class="s0">new </span><span class="s1">SecurityContextLogoutHandler().logout(request</span><span class="s0">, </span><span class="s1">response</span><span class="s0">, </span><span class="s1">authentication)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s3">&quot;redirect:/&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@PostMapping(</span><span class="s3">&quot;loginUser&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String createUser(@Valid AccountForm form</span><span class="s0">, </span><span class="s1">BindingResult result) </span><span class="s0">throws </span><span class="s1">MessagingException</span><span class="s0">, </span><span class="s1">UnsupportedEncodingException {</span>
+        <span class="s0">if </span><span class="s1">(result.hasErrors()) {</span>
+            <span class="s2">//로그아웃</span>
+            <span class="s1">log.info(</span><span class="s3">&quot;로그아웃&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s0">return </span><span class="s3">&quot;user/login/register&quot;</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s1">accountService.createUser(form)</span><span class="s0">;</span>
+
+        <span class="s0">return </span><span class="s3">&quot;redirect:/&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s5">/**</span>
+     <span class="s5">* 로그인 화면이 있는 페이지 컨트롤</span>
+     <span class="s5">*</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">session</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">model</span>
+     <span class="s5">* </span><span class="s6">@return</span>
+     <span class="s5">* </span><span class="s6">@throws </span><span class="s5">UnsupportedEncodingException</span>
+     <span class="s5">* </span><span class="s6">@throws </span><span class="s5">UnknownHostException</span>
+     <span class="s5">*/</span>
+
+    <span class="s1">@RequestMapping(</span><span class="s3">&quot;/user/login/naverlogin&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String login(HttpSession session</span><span class="s0">, </span><span class="s1">Model model) </span><span class="s0">throws </span><span class="s1">UnsupportedEncodingException</span><span class="s0">, </span><span class="s1">UnknownHostException {</span>
+        <span class="s1">String redirectURI = URLEncoder.encode(</span><span class="s3">&quot;http://localhost:8080/user/login/callback&quot;</span><span class="s0">, </span><span class="s3">&quot;UTF-8&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">SecureRandom random = </span><span class="s0">new </span><span class="s1">SecureRandom()</span><span class="s0">;</span>
+        <span class="s1">String state = </span><span class="s0">new </span><span class="s1">BigInteger(</span><span class="s4">130</span><span class="s0">, </span><span class="s1">random).toString()</span><span class="s0">;</span>
+        <span class="s1">String apiURL = </span><span class="s3">&quot;https://nid.naver.com/oauth2.0/authorize?response_type=code&quot;</span><span class="s0">;</span>
+        <span class="s1">apiURL += String.format(</span><span class="s3">&quot;&amp;client_id=%s&amp;redirect_uri=%s&amp;state=%s&quot;</span><span class="s0">,</span>
+                <span class="s1">CLIENT_ID</span><span class="s0">, </span><span class="s1">redirectURI</span><span class="s0">, </span><span class="s1">state)</span><span class="s0">;</span>
+        <span class="s1">session.setAttribute(</span><span class="s3">&quot;state&quot;</span><span class="s0">, </span><span class="s1">state)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;apiURL&quot;</span><span class="s0">, </span><span class="s1">apiURL)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;user/login/naverlogin&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s5">/**</span>
+     <span class="s5">* 콜백 페이지 컨트롤러</span>
+     <span class="s5">*</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">session</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">request</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">model</span>
+     <span class="s5">* </span><span class="s6">@return</span>
+     <span class="s5">* </span><span class="s6">@throws </span><span class="s5">IOException</span>
+     <span class="s5">* </span><span class="s6">@throws </span><span class="s5">ParseException</span>
+
+    <span class="s6">@RequestMapping(&quot;/user/login/callback&quot;)</span>
+    <span class="s5">public String naverCallback1(HttpSession session, HttpServletRequest request, Model model) throws IOException, ParseException {</span>
+        <span class="s5">String code = request.getParameter(&quot;code&quot;);</span>
+        <span class="s5">String state = request.getParameter(&quot;state&quot;);</span>
+        <span class="s5">String redirectURI = URLEncoder.encode(&quot;http://localhost:8080/user/login/callback&quot;, &quot;UTF-8&quot;);</span>
+        <span class="s5">String apiURL;</span>
+        <span class="s5">apiURL = &quot;https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&amp;&quot;;</span>
+        <span class="s5">apiURL += &quot;client_id=&quot; + CLIENT_ID;</span>
+        <span class="s5">apiURL += &quot;&amp;client_secret=&quot; + CLI_SECRET;</span>
+        <span class="s5">apiURL += &quot;&amp;redirect_uri=&quot; + redirectURI;</span>
+        <span class="s5">apiURL += &quot;&amp;code=&quot; + code;</span>
+        <span class="s5">apiURL += &quot;&amp;state=&quot; + state;</span>
+        <span class="s5">System.out.println(&quot;apiURL=&quot; + apiURL);</span>
+        <span class="s5">String res = requestToServer(apiURL);</span>
+        <span class="s5">if (res != null &amp;&amp; !res.equals(&quot;&quot;)) {</span>
+            <span class="s5">model.addAttribute(&quot;res&quot;, res);</span>
+            <span class="s5">Map</span><span class="s7">&lt;String</span><span class="s5">, Object&gt; parsedJson = new JSONParser(res).parseObject();</span>
+            <span class="s5">System.out.println(parsedJson);</span>
+            <span class="s5">session.setAttribute(&quot;currentUser&quot;, res);</span>
+            <span class="s5">session.setAttribute(&quot;currentAT&quot;, parsedJson.get(&quot;access_token&quot;));</span>
+            <span class="s5">session.setAttribute(&quot;currentRT&quot;, parsedJson.get(&quot;refresh_token&quot;));</span>
+        <span class="s5">} else {</span>
+            <span class="s5">model.addAttribute(&quot;res&quot;, &quot;Login failed!&quot;);</span>
+        <span class="s5">}</span>
+        <span class="s5">return &quot;/user/login/callback&quot;;</span>
+    <span class="s5">}</span>
+<span class="s5">*/</span>
+
+    <span class="s1">@RequestMapping(</span><span class="s3">&quot;/user/login/callback&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String naverCallback1(HttpSession session</span><span class="s0">, </span><span class="s1">HttpServletRequest request</span><span class="s0">, </span><span class="s1">Model model) </span><span class="s0">throws </span><span class="s1">IOException</span><span class="s0">, </span><span class="s1">ParseException {</span>
+        <span class="s1">String code = request.getParameter(</span><span class="s3">&quot;code&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">String state = request.getParameter(</span><span class="s3">&quot;state&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">String redirectURI = URLEncoder.encode(REDIRECT_URI</span><span class="s0">, </span><span class="s3">&quot;UTF-8&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">UrlBuilder ub = </span><span class="s0">new </span><span class="s1">UrlBuilder(</span><span class="s3">&quot;https://nid.naver.com/oauth2.0/token&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">ub</span>
+                <span class="s1">.add(</span><span class="s3">&quot;grant_type&quot;</span><span class="s0">, </span><span class="s3">&quot;authorization_code&quot;</span><span class="s1">)</span>
+                <span class="s1">.add(</span><span class="s3">&quot;client_id&quot;</span><span class="s0">, </span><span class="s1">CLIENT_ID)</span>
+                <span class="s1">.add(</span><span class="s3">&quot;client_secret&quot;</span><span class="s0">, </span><span class="s1">CLI_SECRET)</span>
+                <span class="s1">.add(</span><span class="s3">&quot;redirect_uri&quot;</span><span class="s0">, </span><span class="s1">redirectURI)</span>
+                <span class="s1">.add(</span><span class="s3">&quot;code&quot;</span><span class="s0">, </span><span class="s1">code)</span>
+                <span class="s1">.add(</span><span class="s3">&quot;state&quot;</span><span class="s0">, </span><span class="s1">state)</span><span class="s0">;</span>
+        <span class="s1">System.out.println(ub)</span><span class="s0">;</span>
+        <span class="s1">String apiURL = ub.toString()</span><span class="s0">;</span>
+        <span class="s1">String res = requestToServer(apiURL)</span><span class="s0">;</span>
+        <span class="s0">if</span><span class="s1">(res != </span><span class="s0">null </span><span class="s1">&amp;&amp; !res.equals(</span><span class="s3">&quot;&quot;</span><span class="s1">)) {</span>
+            <span class="s1">Map&lt;String</span><span class="s0">, </span><span class="s1">Object&gt; parsedJson = </span><span class="s0">new </span><span class="s1">JSONParser(res).parseObject()</span><span class="s0">;</span>
+            <span class="s0">if</span><span class="s1">(parsedJson.get(</span><span class="s3">&quot;access_token&quot;</span><span class="s1">) != </span><span class="s0">null</span><span class="s1">) {</span>
+
+                <span class="s2">// </span>
+                <span class="s1">String infoStr = getProfileFromNaver(parsedJson.get(</span><span class="s3">&quot;access_token&quot;</span><span class="s1">).toString())</span><span class="s0">;</span>
+                <span class="s1">Map&lt;String</span><span class="s0">, </span><span class="s1">Object&gt; infoMap = </span><span class="s0">new </span><span class="s1">JSONParser(infoStr).parseObject()</span><span class="s0">;</span>
+                <span class="s1">log.info(</span><span class="s3">&quot;access_token받음&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s0">if</span><span class="s1">(infoMap.get(</span><span class="s3">&quot;message&quot;</span><span class="s1">).equals(</span><span class="s3">&quot;success&quot;</span><span class="s1">)) {</span>
+                    <span class="s1">Map&lt;String</span><span class="s0">, </span><span class="s1">Object&gt; infoResp = (Map&lt;String</span><span class="s0">, </span><span class="s1">Object&gt;) infoMap.get(</span><span class="s3">&quot;response&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                    <span class="s1">String uniqueId = infoResp.get(</span><span class="s3">&quot;id&quot;</span><span class="s1">).toString()</span><span class="s0">;</span>
+                    <span class="s1">System.out.println(uniqueId)</span><span class="s0">;</span>
+                    <span class="s1">List&lt;Map&lt;String</span><span class="s0">, </span><span class="s1">String&gt;&gt; infoOAuth = sud.getOAuthInfoByProviderAndUniqueId(</span><span class="s3">&quot;naver&quot;</span><span class="s0">, </span><span class="s1">uniqueId)</span><span class="s0">;</span>
+                    <span class="s1">log.info(</span><span class="s3">&quot;유니크id, provide받음&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                    <span class="s0">if</span><span class="s1">(infoOAuth.size() == </span><span class="s4">1</span><span class="s1">) {</span>
+                        <span class="s1">log.info(</span><span class="s3">&quot;size==1&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                        <span class="s1">System.out.println(infoOAuth)</span><span class="s0">;</span>
+                        <span class="s2">// 네아로 연동이 되어 있다면 연동 정보를 통해 로그인 처리</span>
+                        <span class="s2">// - 현재 로그인한 계정과 네아로 연결된 로그인 계정이 다른 경우, 현재 계정을 로그아웃하고 그 연결된 계정으로 재로그인</span>
+                        <span class="s1">loginWithoutForm(infoOAuth.get(</span><span class="s4">0</span><span class="s1">).get(</span><span class="s3">&quot;username&quot;</span><span class="s1">))</span><span class="s0">;</span>
+                        <span class="s1">log.info(</span><span class="s3">&quot;유저아이디자동로그인&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                        <span class="s1">model.addAttribute(</span><span class="s3">&quot;isConnectedToNaver&quot;</span><span class="s0">, true</span><span class="s1">)</span><span class="s0">;</span>
+                    <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                        <span class="s1">System.out.println(</span><span class="s3">&quot;네이버 연동 정보 없음&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                        <span class="s2">// 로그인이 되어 있다면 기존 아이디를 네아로와 연동할 것인지 확인 여부를 물음</span>
+                        <span class="s1">model.addAttribute(</span><span class="s3">&quot;isConnectedToNaver&quot;</span><span class="s0">, false</span><span class="s1">)</span><span class="s0">;</span>
+                    <span class="s1">}</span>
+                <span class="s1">}</span>
+                <span class="s1">session.setAttribute(</span><span class="s3">&quot;currentUser&quot;</span><span class="s0">, </span><span class="s1">res)</span><span class="s0">;</span>
+                <span class="s1">session.setAttribute(</span><span class="s3">&quot;currentAT&quot;</span><span class="s0">, </span><span class="s1">parsedJson.get(</span><span class="s3">&quot;access_token&quot;</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">session.setAttribute(</span><span class="s3">&quot;currentRT&quot;</span><span class="s0">, </span><span class="s1">parsedJson.get(</span><span class="s3">&quot;refresh_token&quot;</span><span class="s1">))</span><span class="s0">;</span>
+
+                <span class="s1">model.addAttribute(</span><span class="s3">&quot;res&quot;</span><span class="s0">, </span><span class="s1">res)</span><span class="s0">;</span>
+            <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                <span class="s1">model.addAttribute(</span><span class="s3">&quot;res&quot;</span><span class="s0">, </span><span class="s3">&quot;Login failed!&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+            <span class="s1">System.out.println(parsedJson)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+            <span class="s1">model.addAttribute(</span><span class="s3">&quot;res&quot;</span><span class="s0">, </span><span class="s3">&quot;Login failed!&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s3">&quot;/user/login/callback&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s2">//네이버 인증</span>
+    <span class="s0">public static void </span><span class="s1">main(String[] args) {</span>
+        <span class="s1">String token = </span><span class="s3">&quot;AAAAO-MO-JqqOgIj_tnFlddMFNe6NCZQzAzNjIF8Ib0FI0SoaHCv2pE5hmgSCaMDkI_ezYyoqYXtZVrfqhymxGAcFKg&quot;</span><span class="s0">; </span><span class="s2">// 네이버 로그인 접근 토큰;</span>
+        <span class="s1">String header = </span><span class="s3">&quot;Bearer &quot; </span><span class="s1">+ token</span><span class="s0">; </span><span class="s2">// Bearer 다음에 공백 추가</span>
+
+
+        <span class="s1">String apiURL = </span><span class="s3">&quot;https://openapi.naver.com/v1/nid/me&quot;</span><span class="s0">;</span>
+
+
+        <span class="s1">Map&lt;String</span><span class="s0">, </span><span class="s1">String&gt; requestHeaders = </span><span class="s0">new </span><span class="s1">HashMap&lt;&gt;()</span><span class="s0">;</span>
+        <span class="s1">requestHeaders.put(</span><span class="s3">&quot;Authorization&quot;</span><span class="s0">, </span><span class="s1">header)</span><span class="s0">;</span>
+        <span class="s1">String responseBody = get(apiURL</span><span class="s0">,</span><span class="s1">requestHeaders)</span><span class="s0">;</span>
+
+
+        <span class="s1">System.out.println(responseBody)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s0">private static </span><span class="s1">String get(String apiUrl</span><span class="s0">, </span><span class="s1">Map&lt;String</span><span class="s0">, </span><span class="s1">String&gt; requestHeaders){</span>
+        <span class="s1">HttpURLConnection con = connect(apiUrl)</span><span class="s0">;</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">con.setRequestMethod(</span><span class="s3">&quot;GET&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s0">for</span><span class="s1">(Map.Entry&lt;String</span><span class="s0">, </span><span class="s1">String&gt; header :requestHeaders.entrySet()) {</span>
+                <span class="s1">con.setRequestProperty(header.getKey()</span><span class="s0">, </span><span class="s1">header.getValue())</span><span class="s0">;</span>
+            <span class="s1">}</span>
+
+
+            <span class="s0">int </span><span class="s1">responseCode = con.getResponseCode()</span><span class="s0">;</span>
+            <span class="s0">if </span><span class="s1">(responseCode == HttpURLConnection.HTTP_OK) { </span><span class="s2">// 정상 호출</span>
+                <span class="s0">return </span><span class="s1">readBody(con.getInputStream())</span><span class="s0">;</span>
+            <span class="s1">} </span><span class="s0">else </span><span class="s1">{ </span><span class="s2">// 에러 발생</span>
+                <span class="s0">return </span><span class="s1">readBody(con.getErrorStream())</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(IOException e) {</span>
+            <span class="s0">throw new </span><span class="s1">RuntimeException(</span><span class="s3">&quot;API 요청과 응답 실패&quot;</span><span class="s0">, </span><span class="s1">e)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">finally </span><span class="s1">{</span>
+            <span class="s1">con.disconnect()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+
+    <span class="s0">private static </span><span class="s1">HttpURLConnection connect(String apiUrl){</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">URL url = </span><span class="s0">new </span><span class="s1">URL(apiUrl)</span><span class="s0">;</span>
+            <span class="s0">return </span><span class="s1">(HttpURLConnection)url.openConnection()</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(MalformedURLException e) {</span>
+            <span class="s0">throw new </span><span class="s1">RuntimeException(</span><span class="s3">&quot;API URL이 잘못되었습니다. : &quot; </span><span class="s1">+ apiUrl</span><span class="s0">, </span><span class="s1">e)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(IOException e) {</span>
+            <span class="s0">throw new </span><span class="s1">RuntimeException(</span><span class="s3">&quot;연결이 실패했습니다. : &quot; </span><span class="s1">+ apiUrl</span><span class="s0">, </span><span class="s1">e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+
+    <span class="s0">private static </span><span class="s1">String readBody(InputStream body){</span>
+        <span class="s1">InputStreamReader streamReader = </span><span class="s0">new </span><span class="s1">InputStreamReader(body)</span><span class="s0">;</span>
+
+
+        <span class="s0">try </span><span class="s1">(BufferedReader lineReader = </span><span class="s0">new </span><span class="s1">BufferedReader(streamReader)) {</span>
+            <span class="s1">StringBuilder responseBody = </span><span class="s0">new </span><span class="s1">StringBuilder()</span><span class="s0">;</span>
+
+
+            <span class="s1">String line</span><span class="s0">;</span>
+            <span class="s0">while </span><span class="s1">((line = lineReader.readLine()) != </span><span class="s0">null</span><span class="s1">) {</span>
+                <span class="s1">responseBody.append(line)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+
+
+            <span class="s0">return </span><span class="s1">responseBody.toString()</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(IOException e) {</span>
+            <span class="s0">throw new </span><span class="s1">RuntimeException(</span><span class="s3">&quot;API 응답을 읽는데 실패했습니다.&quot;</span><span class="s0">, </span><span class="s1">e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+
+
+    <span class="s5">/**</span>
+     <span class="s5">* 토큰 갱신 요청 페이지 컨트롤러</span>
+     <span class="s5">*</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">session</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">request</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">model</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">refreshToken</span>
+     <span class="s5">* </span><span class="s6">@return</span>
+     <span class="s5">* </span><span class="s6">@throws </span><span class="s5">IOException</span>
+     <span class="s5">* </span><span class="s6">@throws </span><span class="s5">ParseException</span>
+     <span class="s5">*/</span>
+    <span class="s1">@RequestMapping(</span><span class="s3">&quot;/naver/refreshToken&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String refreshToken(HttpSession session</span><span class="s0">, </span><span class="s1">HttpServletRequest request</span><span class="s0">, </span><span class="s1">Model model</span><span class="s0">, </span><span class="s1">String refreshToken) </span><span class="s0">throws </span><span class="s1">IOException</span><span class="s0">, </span><span class="s1">ParseException {</span>
+        <span class="s1">String apiURL</span><span class="s0">;</span>
+        <span class="s1">apiURL = </span><span class="s3">&quot;https://nid.naver.com/oauth2.0/token?grant_type=refresh_token&amp;&quot;</span><span class="s0">;</span>
+        <span class="s1">apiURL += </span><span class="s3">&quot;client_id=&quot; </span><span class="s1">+ CLIENT_ID</span><span class="s0">;</span>
+        <span class="s1">apiURL += </span><span class="s3">&quot;&amp;client_secret=&quot; </span><span class="s1">+ CLI_SECRET</span><span class="s0">;</span>
+        <span class="s1">apiURL += </span><span class="s3">&quot;&amp;refresh_token=&quot; </span><span class="s1">+ refreshToken</span><span class="s0">;</span>
+        <span class="s1">System.out.println(</span><span class="s3">&quot;apiURL=&quot; </span><span class="s1">+ apiURL)</span><span class="s0">;</span>
+        <span class="s1">String res = requestToServer(apiURL)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;res&quot;</span><span class="s0">, </span><span class="s1">res)</span><span class="s0">;</span>
+        <span class="s1">session.invalidate()</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;/user/login/callback&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s5">/**</span>
+     <span class="s5">* 토큰 삭제 컨트롤러</span>
+     <span class="s5">*</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">session</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">request</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">model</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">accessToken</span>
+     <span class="s5">* </span><span class="s6">@return</span>
+     <span class="s5">* </span><span class="s6">@throws </span><span class="s5">IOException</span>
+     <span class="s5">*/</span>
+    <span class="s1">@RequestMapping(</span><span class="s3">&quot;/naver/deleteToken&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String deleteToken(HttpSession session</span><span class="s0">, </span><span class="s1">HttpServletRequest request</span><span class="s0">, </span><span class="s1">Model model</span><span class="s0">, </span><span class="s1">String accessToken) </span><span class="s0">throws </span><span class="s1">IOException {</span>
+        <span class="s1">String apiURL</span><span class="s0">;</span>
+        <span class="s1">apiURL = </span><span class="s3">&quot;https://nid.naver.com/oauth2.0/token?grant_type=delete&amp;&quot;</span><span class="s0">;</span>
+        <span class="s1">apiURL += </span><span class="s3">&quot;client_id=&quot; </span><span class="s1">+ CLIENT_ID</span><span class="s0">;</span>
+        <span class="s1">apiURL += </span><span class="s3">&quot;&amp;client_secret=&quot; </span><span class="s1">+ CLI_SECRET</span><span class="s0">;</span>
+        <span class="s1">apiURL += </span><span class="s3">&quot;&amp;access_token=&quot; </span><span class="s1">+ accessToken</span><span class="s0">;</span>
+        <span class="s1">apiURL += </span><span class="s3">&quot;&amp;service_provider=NAVER&quot;</span><span class="s0">;</span>
+        <span class="s1">System.out.println(</span><span class="s3">&quot;apiURL=&quot; </span><span class="s1">+ apiURL)</span><span class="s0">;</span>
+        <span class="s1">String res = requestToServer(apiURL)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;res&quot;</span><span class="s0">, </span><span class="s1">res)</span><span class="s0">;</span>
+        <span class="s1">session.invalidate()</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;/user/login/callback&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s5">/**</span>
+     <span class="s5">* 액세스 토큰으로 네이버에서 프로필 받기</span>
+     <span class="s5">*</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">accessToken</span>
+     <span class="s5">* </span><span class="s6">@return</span>
+     <span class="s5">* </span><span class="s6">@throws </span><span class="s5">IOException</span>
+     <span class="s5">*/</span>
+    <span class="s1">@ResponseBody</span>
+    <span class="s1">@RequestMapping(</span><span class="s3">&quot;/naver/getProfile&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String getProfileFromNaver(String accessToken) </span><span class="s0">throws </span><span class="s1">IOException {</span>
+        <span class="s2">// 네이버 로그인 접근 토큰;</span>
+        <span class="s1">String apiURL = </span><span class="s3">&quot;https://openapi.naver.com/v1/nid/me&quot;</span><span class="s0">;</span>
+        <span class="s1">String headerStr = </span><span class="s3">&quot;Bearer &quot; </span><span class="s1">+ accessToken</span><span class="s0">; </span><span class="s2">// Bearer 다음에 공백 추가</span>
+        <span class="s1">String res = requestToServer(apiURL</span><span class="s0">, </span><span class="s1">headerStr)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">res</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s5">/**</span>
+     <span class="s5">* 세션 무효화(로그아웃)</span>
+     <span class="s5">*</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">session</span>
+     <span class="s5">* </span><span class="s6">@return</span>
+     <span class="s5">*/</span>
+    <span class="s1">@RequestMapping(</span><span class="s3">&quot;/naver/invalidate&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String invalidateSession(HttpSession session) {</span>
+        <span class="s1">session.invalidate()</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;redirect:/&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s5">/**</span>
+     <span class="s5">* 서버 통신 메소드</span>
+     <span class="s5">*</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">apiURL</span>
+     <span class="s5">* </span><span class="s6">@return</span>
+     <span class="s5">* </span><span class="s6">@throws </span><span class="s5">IOException</span>
+     <span class="s5">*/</span>
+    <span class="s0">private </span><span class="s1">String requestToServer(String apiURL) </span><span class="s0">throws </span><span class="s1">IOException {</span>
+        <span class="s0">return </span><span class="s1">requestToServer(apiURL</span><span class="s0">, </span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s5">/**</span>
+     <span class="s5">* 서버 통신 메소드</span>
+     <span class="s5">*</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">apiURL</span>
+     <span class="s5">* </span><span class="s6">@param </span><span class="s5">headerStr</span>
+     <span class="s5">* </span><span class="s6">@return</span>
+     <span class="s5">* </span><span class="s6">@throws </span><span class="s5">IOException</span>
+     <span class="s5">*/</span>
+    <span class="s0">private </span><span class="s1">String requestToServer(String apiURL</span><span class="s0">, </span><span class="s1">String headerStr) </span><span class="s0">throws </span><span class="s1">IOException {</span>
+        <span class="s1">URL url = </span><span class="s0">new </span><span class="s1">URL(apiURL)</span><span class="s0">;</span>
+        <span class="s1">HttpURLConnection con = (HttpURLConnection)url.openConnection()</span><span class="s0">;</span>
+        <span class="s1">con.setRequestMethod(</span><span class="s3">&quot;GET&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">System.out.println(</span><span class="s3">&quot;header Str: &quot; </span><span class="s1">+ headerStr)</span><span class="s0">;</span>
+        <span class="s0">if</span><span class="s1">(headerStr != </span><span class="s0">null </span><span class="s1">&amp;&amp; !headerStr.equals(</span><span class="s3">&quot;&quot;</span><span class="s1">) ) {</span>
+            <span class="s1">con.setRequestProperty(</span><span class="s3">&quot;Authorization&quot;</span><span class="s0">, </span><span class="s1">headerStr)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">int </span><span class="s1">responseCode = con.getResponseCode()</span><span class="s0">;</span>
+        <span class="s1">BufferedReader br</span><span class="s0">;</span>
+        <span class="s1">System.out.println(</span><span class="s3">&quot;responseCode=&quot;</span><span class="s1">+responseCode)</span><span class="s0">;</span>
+        <span class="s0">if</span><span class="s1">(responseCode == </span><span class="s4">200</span><span class="s1">) { </span><span class="s2">// 정상 호출</span>
+            <span class="s1">br = </span><span class="s0">new </span><span class="s1">BufferedReader(</span><span class="s0">new </span><span class="s1">InputStreamReader(con.getInputStream()))</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{  </span><span class="s2">// 에러 발생</span>
+            <span class="s1">br = </span><span class="s0">new </span><span class="s1">BufferedReader(</span><span class="s0">new </span><span class="s1">InputStreamReader(con.getErrorStream()))</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s1">String inputLine</span><span class="s0">;</span>
+        <span class="s1">StringBuffer res = </span><span class="s0">new </span><span class="s1">StringBuffer()</span><span class="s0">;</span>
+        <span class="s0">while </span><span class="s1">((inputLine = br.readLine()) != </span><span class="s0">null</span><span class="s1">) {</span>
+            <span class="s1">res.append(inputLine)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s1">br.close()</span><span class="s0">;</span>
+        <span class="s0">if</span><span class="s1">(responseCode==</span><span class="s4">200</span><span class="s1">) {</span>
+            <span class="s0">return </span><span class="s1">res.toString()</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+            <span class="s0">return null;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;/&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String index() {</span>
+
+        <span class="s0">return </span><span class="s3">&quot;/home/index.html&quot;</span><span class="s0">;</span>
+
+    <span class="s1">}</span>
+
+
+
+<span class="s1">}</span>
+
+</pre>
+</body>
+</html>

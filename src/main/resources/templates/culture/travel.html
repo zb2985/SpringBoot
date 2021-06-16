@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        .my-box { border:1px solid; padding:1px; }
+    </style>
+    <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
+    <meta charset="UTF-8">
+    <header th:insert="common/header.html"></header>
+</head>
+<body>
+
+<div class="my-box">
+    <h5>미국-일본 환율</h5>
+    <table>
+        <tr>
+            <th>한화 : <td class="card-text" id="Exchange2" name="Exchange2" ></td>
+        </tr>
+        <tr>
+            <th>상대원화 : <td class="card-text" id="Exchange1" name="Exchange1"></td></th>
+        </tr>
+        <tr>
+            <th>한화 : <td class="card-text" id="Ja2" name="Ja2" ></td>
+        </tr>
+        <tr>
+            <th>상대원화 : <td class="card-text" id="Ja1" name="Ja1"></td></th>
+        </tr>
+    </table>
+</div>
+
+
+<div class="my-box">
+    <h5>코로나수치</h5>
+    <table>
+
+        <tr>
+            <th>기준일 : <td class="card-text" id="stateDt" name="stateDt" ></td>
+        </tr>
+        <tr>
+            <th>치료중 환자 : <td class="card-text" id="careCnt" name="careCnt"></td></th>
+        </tr>
+        <tr>
+            <th>확진자 수 : </th><td class="card-text" id="decideCnt" name="decideCnt"></td></th>
+        </tr>
+
+    </table>
+</div>
+
+<div class="my-box">
+    <h5>국내 항공기 운행</h5>
+    <table>
+
+        <tr>
+            <th>출발공항 : <td class="card-text" id="arrAirportNm" name="arrAirportNm" >제주</td>
+        </tr>
+        <tr>
+            <th>출발시간 : <td class="card-text" id="arrPlandTime" name="arrPlandTime">202106121045</td></th>
+        </tr>
+        <tr>
+            <th>도착공항 : </th><td class="card-text" id="depAirportNm" name="depAirportNm">광주</td></th>
+        </tr>
+        <tr>
+            <th>도착시간 : </th><td class="card-text" id="depPlandTime" name="depPlandTime">202106120955</td></th>
+        </tr>
+        <tr>
+            <th>항공편명 : </th><td class="card-text" id="vihicleId" name="vihicleId">OZ8141</td></th>
+        </tr>
+    </table>
+</div>
+
+
+
+
+<script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function exchange() {
+
+                $.ajax({
+                    url: 'exchange',
+                    type: 'get',
+                    success: function (v) {
+                        var Exchange1 = v.환율[0].상대원화;
+                        var Exchange2 = v.환율[0].한화;
+                        var Ja1 = v.환율[2].상대원화;
+                        var Ja2 = v.환율[2].한화;
+
+                        $("#Exchange1").text(Exchange1);
+                        $("#Exchange2").text(Exchange2);
+                        $("#Ja1").text(Ja1);
+                        $("#Ja2").text(Ja2);
+
+
+console.log(v);
+
+                    }});});
+
+
+
+    $(function() {
+
+
+        $.ajax({
+            url: "covid",
+            type: "GET",
+            dataType: "json",
+
+            success: function (v) {
+                var stateDt = v.body.items[0].stateDt;
+                var careCnt = v.body.items[0].careCnt;
+                var decideCnt = v.body.items[0].decideCnt;
+                $("#stateDt").text(stateDt);
+                $("#careCnt").text(careCnt);
+                $("#decideCnt").text(decideCnt);
+                console.log(v);
+            }, error: function (e) {
+
+                console.log(e);
+
+            }
+        });
+
+    });
+
+</script>
+<script>
+    $(function() {
+
+
+        $.ajax({
+            url: "air",
+            type: "GET",
+            dataType: "json",
+
+            success: function (v) {
+                /* var depPlandTime = v.body.items[1].depPlandTime;
+                 var arrAirportNm = v.body.items[1].arrAirportNm;
+                 var arrPlandTime = v.body.items[1].arrPlandTime;
+                 var depAirportNm = v.body.items[1].depAirportNm;
+                 var vihicleId = v.body.items[1].vihicleId;
+                 $("#depPlandTime").text(depPlandTime);
+                 $("#arrAirportNm").text(arrAirportNm);
+                 $("#arrPlandTime").text(arrPlandTime);
+                 $("#depAirportNm").text(depAirportNm);
+                 $("#vihicleId").text(vihicleId);
+
+
+                 */
+                console.log(v);
+            }, error: function (e) {
+
+                console.log(e);
+
+            }
+        });
+
+    });
+
+</script>
+</body>
+</html>

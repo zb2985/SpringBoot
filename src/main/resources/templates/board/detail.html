@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="@{'게시판 - ' + ${post.title}}"></title>
+    <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
+</head>
+<body>
+<header th:insert="common/header.html"></header>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" th:text="@{${post.title} + ' - ' + ${post.author}}"></h5>
+            <p class="card-text">
+                <small class="text-muted" th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></small>
+            </p>
+            <p class="card-text" th:text="${post.content}"></p>
+            <div th:if="${post.fileId != null}">
+                <strong>첨부파일 : </strong>
+                <a class="card-text" th:href="@{'/download/' + ${post.fileId}}" th:text="파일다운로드"></a>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-auto mr-auto"></div>
+        <div class="col-auto">
+            <a class="btn btn-info" th:href="@{'/post/edit/' + ${post.id}}" role="button">수정</a>
+        </div>
+        <div class="col-auto">
+            <form id="delete-form" th:action="@{'/post/' + ${post.id}}" method="post">
+                <input type="hidden" name="_method" value="delete"/>
+                <button id="delete-btn" type="submit" class="btn btn-danger">삭제</button>
+            </form>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+
+<div class="container" >
+
+    <form>
+        <div class="input-group">
+            <input type="text"  name="replyer" id="replyer" th:value="${post.author}">
+            <input type="hidden" name="bno" id="bno" th:value="${post.id}"/>
+            <input type="text" class="form-control" id="replytext" name="replytext" placeholder="내용을 입력하세요.">
+            <input class="btn btn-default" type="button" name="insert" id="insert" value="입력"></input>
+        </div>
+    </form>
+</div>
+
+
+</div>
+
+<script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+
+
+<div class="container">
+    <div class="commentList" id="commentList"></div>
+</div>
+<script type="text/javascript">
+    var bno = $("input[name=bno]").val(); //게시글 번호
+    var replyer = $("input[name=replyer]").val();
+
+
+    $(function() {
+        $("#insert").click(function () { //댓글 등록 버튼 클릭시
+            var textre = $("#replytext").val();
+            $.ajax({
+                url: "/post/" + bno + "/replies",
+                type: "GET",
+                data: {
+                    bno: bno
+                    , replyer: replyer,
+                    replytext: textre
+                },
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+
+                }
+                , error: function (e) {
+                    console.log(e);
+
+                }
+            });
+        });
+    });
+
+
+
+
+/*
+    댓글 목록
+    function commentList(){
+        $.ajax({
+            url : '/comment/cnolist',
+            type : 'get',
+            data : {'bno': bno},
+            success : function(data){
+
+                var a ='';
+                $.each(data, function(key, value){
+                    a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
+                    a += '<div class="commentInfo'+value.cno+'">'+'댓글번호 : '+value.cno+' / 작성자 : '+value.writer;
+                    a += '<a onclick="commentUpdate('+value.cno+',\''+value.content+'\');"> 수정 </a>';
+                    a += '<a onclick="commentDelete('+value.cno+');"> 삭제 </a> </div>';
+                    a += '<div class="commentContent'+value.cno+'"> <p> 내용 : '+value.content +'</p>';
+                    a += '</div></div>';
+                });
+
+                $(".commentList").html(a);
+            }
+        });
+    }
+
+    댓글 등록
+    function commentInsert(insertData){
+        $.ajax({
+            url : '/comment/insert',
+            type : 'post',
+            data : insertData,
+            success : function(data){
+                if(data == 1) {
+                    commentList(); //댓글 작성 후 댓글 목록 reload
+                    $('[name=content]').val('');
+                }
+            }
+        });
+    }
+
+   댓글 수정 - 댓글 내용 출력을 input 폼으로 변경
+    function commentUpdate(cno, content){
+        var a ='';
+
+        a += '<div class="input-group">';
+        a += '<input type="text" class="form-control" name="content_'+cno+'" value="'+content+'"/>';
+        a += '<span class="input-group-btn"><button class="btn btn-default" type="button" onclick="commentUpdateProc('+cno+');">수정</button> </span>';
+        a += '</div>';
+
+        $('.commentContent'+cno).html(a);
+
+    }
+
+   댓글 수정
+    function commentUpdateProc(cno){
+        var updateContent = $('[name=content_'+cno+']').val();
+
+        $.ajax({
+            url : '/comment/update',
+            type : 'post',
+            data : {'content' : updateContent, 'cno' : cno},
+            success : function(data){
+                if(data == 1) commentList(bno); //댓글 수정후 목록 출력
+            }
+        });
+    }
+
+    댓글 삭제
+    function commentDelete(cno){
+        $.ajax({
+            url : '/comment/delete/{cno}'+cno,
+            type : 'post',
+            success : function(data){
+                if(data == 1) commentList(bno); //댓글 삭제후 목록 출력
+            }
+        });
+    }
+
+
+
+
+    $(document).ready(function(){
+        commentList(); //페이지 로딩시 댓글 목록 출력
+    });
+
+
+
+ */
+
+</script>

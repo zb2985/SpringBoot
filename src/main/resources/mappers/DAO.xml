@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kopo.jjh.prj.mapper.impl.DAO">
+    <select id="idCheck" parameterType="String" resultType="Integer">
+        SELECT COUNT(*) FROM account WHERE username=#{username}
+    </select>
+    <select id="emailCheck" parameterType="String" resultType="Integer">
+        SELECT COUNT(*) FROM account WHERE email = #{email}
+    </select>
+</mapper>

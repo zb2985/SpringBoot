@@ -1,0 +1,155 @@
+<html>
+<head>
+<title>BoardInfoController.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+BoardInfoController.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">kopo.jjh.prj.controller</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.dto.BoardInfoDto</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.service.BoardInfoService</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">lombok.extern.slf4j.Slf4j</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.apache.logging.log4j.LogManager</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.apache.logging.log4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.stereotype.Controller</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.ui.Model</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.web.bind.annotation.*</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.util.List</span><span class="s0">;</span>
+
+<span class="s1">@Controller</span>
+<span class="s1">@Slf4j</span>
+<span class="s0">public class </span><span class="s1">BoardInfoController {</span>
+   
+    <span class="s0">private static final </span><span class="s1">Logger logger = LogManager.getLogger(BoardInfoController.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+
+    <span class="s0">private </span><span class="s1">BoardInfoService boardInfoService</span><span class="s0">;  </span><span class="s2">//게시판</span>
+   
+    
+    <span class="s0">public </span><span class="s1">BoardInfoController(BoardInfoService boardInfoService) {</span>
+
+      
+        <span class="s0">this</span><span class="s1">.boardInfoService = boardInfoService</span><span class="s0">;</span>
+    
+    <span class="s1">}</span>
+
+
+<span class="s2">/* 
+    @GetMapping(&quot;list&quot;) 
+    public String list(Model model) { 
+        List&lt;BoardInfoDto&gt; boardInfoDtoList = boardInfoService.getBoardList(); 
+        model.addAttribute(&quot;postList&quot;, boardInfoDtoList); 
+        logger.info(&quot;글목록 실행&quot;); 
+ 
+ 
+        return &quot;board/list.html&quot;; 
+    } 
+ 
+ */</span>
+
+  
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;Infolist&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String list(Long id</span><span class="s0">, </span><span class="s1">Model model</span><span class="s0">,  </span><span class="s1">@RequestParam(value=</span><span class="s3">&quot;page&quot;</span><span class="s0">, </span><span class="s1">defaultValue = </span><span class="s3">&quot;1&quot;</span><span class="s1">) Integer pageNum) {</span>
+        <span class="s1">List&lt;BoardInfoDto&gt; boardInfoList = boardInfoService.BoardInfolist(pageNum)</span><span class="s0">;</span>
+        <span class="s1">Integer[] pageInfoList = boardInfoService.getPageInfoList(pageNum)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;boardInfoList&quot;</span><span class="s0">,</span><span class="s1">boardInfoList)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;pageInfoList&quot;</span><span class="s0">, </span><span class="s1">pageInfoList)</span><span class="s0">;</span>
+
+
+        <span class="s0">return </span><span class="s3">&quot;boardinfo/list.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;Infopost&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String post() {</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;글쓰기페이지&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;boardinfo/post.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;culture&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String culturepage() {</span>
+        <span class="s1">log.info(</span><span class="s3">&quot;문화관-일본어학습&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;culture/home2.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+   
+    <span class="s2">//파일업로드</span>
+    <span class="s1">@PostMapping(</span><span class="s3">&quot;Infopost&quot;</span><span class="s1">)</span>
+
+    <span class="s0">public </span><span class="s1">String upload( BoardInfoDto boardInfoDto</span><span class="s0">, int </span><span class="s1">hitCnt) {</span>
+
+        <span class="s1">log.info(</span><span class="s3">&quot;write함수&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">boardInfoService.saveInfoPost(boardInfoDto)</span><span class="s0">;</span>
+
+
+        <span class="s1">log.info(</span><span class="s3">&quot;파일업로드&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">try </span><span class="s1">{</span>
+
+
+            <span class="s2">/* 실행되는 위치의 'files' 폴더에 파일이 저장됩니다. */</span>
+            <span class="s1">String savePath = System.getProperty(</span><span class="s3">&quot;user.dir&quot;</span><span class="s1">) + </span><span class="s3">&quot;</span><span class="s0">\\</span><span class="s3">files&quot;</span><span class="s0">;</span>
+            <span class="s2">/* 파일이 저장되는 폴더가 없으면 폴더를 생성합니다. */</span>
+
+
+
+
+            <span class="s1">boardInfoService.saveInfoPost(boardInfoDto)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(Exception e) {</span>
+            <span class="s1">e.printStackTrace()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s3">&quot;redirect:/Infolist&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+
+
+
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;Infopost/{id}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String detail(@PathVariable(</span><span class="s3">&quot;id&quot;</span><span class="s1">) Long id</span><span class="s0">, </span><span class="s1">Model model) {</span>
+        <span class="s1">BoardInfoDto boardInfoDto = boardInfoService.getInfoPost(id)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;Infopost&quot;</span><span class="s0">, </span><span class="s1">boardInfoDto)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;boardinfo/detail.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@GetMapping(</span><span class="s3">&quot;Infopost/edit/{id}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String edit(@PathVariable(</span><span class="s3">&quot;id&quot;</span><span class="s1">) Long id</span><span class="s0">, </span><span class="s1">Model model) {</span>
+        <span class="s1">BoardInfoDto boardInfoDto = boardInfoService.getInfoPost(id)</span><span class="s0">;</span>
+        <span class="s1">model.addAttribute(</span><span class="s3">&quot;Infopost&quot;</span><span class="s0">, </span><span class="s1">boardInfoDto)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;boardinfo/edit.html&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@PutMapping(</span><span class="s3">&quot;Infopost/edit/{id}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String update(BoardInfoDto boardInfoDto) {</span>
+        <span class="s1">boardInfoService.saveInfoPost(boardInfoDto)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;redirect:/Infolist&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@DeleteMapping(</span><span class="s3">&quot;Infopost/{id}&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">String delete(@PathVariable(</span><span class="s3">&quot;id&quot;</span><span class="s1">) Long id) {</span>
+        <span class="s1">boardInfoService.deleteInfoPost(id)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s3">&quot;redirect:/Infolist&quot;</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+
+
+
+<span class="s1">}</span>
+
+</pre>
+</body>
+</html>

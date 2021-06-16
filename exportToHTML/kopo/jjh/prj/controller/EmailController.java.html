@@ -1,0 +1,179 @@
+<html>
+<head>
+<title>EmailController.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #808080;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+EmailController.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">kopo.jjh.prj.controller</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">io.swagger.v3.oas.annotations.parameters.RequestBody</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.mapper.IUserService</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.security.service.AccountService</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.security.service.BBoardService</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.security.service.EmailService</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">lombok.RequiredArgsConstructor</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">lombok.extern.slf4j.Slf4j</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.mybatis.spring.annotation.MapperScan</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.beans.factory.annotation.Autowired</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.mail.SimpleMailMessage</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.mail.javamail.JavaMailSender</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.mail.javamail.MimeMessageHelper</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.mail.javamail.MimeMessagePreparator</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.stereotype.Controller</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.web.bind.annotation.*</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">javax.mail.internet.MimeMessage</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Map</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Random</span><span class="s0">;</span>
+
+<span class="s1">@RequiredArgsConstructor</span>
+<span class="s1">@RestController</span>
+<span class="s1">@Controller</span>
+<span class="s1">@Slf4j</span>
+<span class="s1">@MapperScan(basePackages = </span><span class="s2">&quot;kopo/jjh/prj/mapper/impl/&quot;</span><span class="s1">)</span>
+<span class="s0">public class </span><span class="s1">EmailController {</span>
+<span class="s1">@Autowired</span>
+    <span class="s1">JavaMailSender mailSender</span><span class="s0">;</span>
+
+
+
+    <span class="s0">private final </span><span class="s1">EmailService emailService</span><span class="s0">;</span>
+
+    <span class="s1">@RequestMapping(value = </span><span class="s2">&quot;mails&quot;</span><span class="s0">, </span><span class="s1">method = RequestMethod.GET)</span>
+    <span class="s0">public void </span><span class="s1">sendMailTest2() </span><span class="s0">throws </span><span class="s1">Exception{</span>
+
+        <span class="s1">String subject = </span><span class="s2">&quot;test 메일&quot;</span><span class="s0">;</span>
+        <span class="s1">String content = </span><span class="s2">&quot;메일 테스트 내용.&quot;</span><span class="s0">;</span>
+        <span class="s1">String from = </span><span class="s2">&quot;보내는이 아이디@도메인주소&quot;</span><span class="s0">;</span>
+        <span class="s1">String to = </span><span class="s2">&quot;받는이 아이디@도메인주소&quot;</span><span class="s0">;</span>
+
+
+        <span class="s0">final </span><span class="s1">MimeMessagePreparator preparator = </span><span class="s0">new </span><span class="s1">MimeMessagePreparator() {</span>
+
+            <span class="s0">public void </span><span class="s1">prepare(MimeMessage mimeMessage) </span><span class="s0">throws </span><span class="s1">Exception{</span>
+                <span class="s0">final </span><span class="s1">MimeMessageHelper mailHelper = </span><span class="s0">new </span><span class="s1">MimeMessageHelper(mimeMessage</span><span class="s0">, true, </span><span class="s2">&quot;UTF-8&quot;</span><span class="s1">)</span><span class="s0">;</span>
+
+                <span class="s1">mailHelper.setFrom(from)</span><span class="s0">;</span>
+                <span class="s1">mailHelper.setTo(to)</span><span class="s0">;</span>
+                <span class="s1">mailHelper.setSubject(subject)</span><span class="s0">;</span>
+                <span class="s1">mailHelper.setText(content</span><span class="s0">, true</span><span class="s1">)</span><span class="s0">;</span>
+
+            <span class="s1">}</span>
+
+        <span class="s1">}</span><span class="s0">;</span>
+
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">mailSender.send((SimpleMailMessage) preparator)</span><span class="s0">;</span>
+
+        <span class="s1">} </span><span class="s0">catch</span><span class="s1">(Exception e) {</span>
+            <span class="s1">e.printStackTrace()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+    <span class="s1">}</span>
+
+    <span class="s3">/* 이메일 인증 */</span>
+    <span class="s1">@RequestMapping(value=</span><span class="s2">&quot;mailCheck&quot;</span><span class="s0">, </span><span class="s1">method=RequestMethod.GET)</span>
+    <span class="s1">@ResponseBody</span>
+    <span class="s0">public </span><span class="s1">String mailCheckGET(String email) </span><span class="s0">throws </span><span class="s1">Exception{</span>
+
+        <span class="s3">/* 뷰(View)로부터 넘어온 데이터 확인 */</span>
+        <span class="s1">log.info(</span><span class="s2">&quot;이메일 데이터 전송 확인&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">log.info(</span><span class="s2">&quot;인증번호 : &quot; </span><span class="s1">+ email)</span><span class="s0">;</span>
+
+<span class="s1">Random random = </span><span class="s0">new </span><span class="s1">Random()</span><span class="s0">;</span>
+<span class="s0">int </span><span class="s1">checkNum = random.nextInt(</span><span class="s4">888888</span><span class="s1">)+</span><span class="s4">1111111</span><span class="s0">;</span>
+<span class="s1">log.info(</span><span class="s2">&quot;인증번호&quot;</span><span class="s1">+checkNum)</span><span class="s0">;</span>
+        <span class="s3">/* 이메일 보내기 */</span>
+        <span class="s1">String setFrom = </span><span class="s2">&quot;zb2985@gmail.com&quot;</span><span class="s0">;</span>
+        <span class="s1">String toMail = email</span><span class="s0">;</span>
+        <span class="s1">String title = </span><span class="s2">&quot;회원가입 인증 이메일 입니다.&quot;</span><span class="s0">;</span>
+        <span class="s1">String content =</span>
+                <span class="s2">&quot;홈페이지를 방문해주셔서 감사합니다.&quot; </span><span class="s1">+</span>
+                        <span class="s2">&quot;&lt;br&gt;&lt;br&gt;&quot; </span><span class="s1">+</span>
+                        <span class="s2">&quot;인증 번호는 &quot; </span><span class="s1">+ checkNum + </span><span class="s2">&quot;입니다.&quot; </span><span class="s1">+</span>
+                        <span class="s2">&quot;&lt;br&gt;&quot; </span><span class="s1">+</span>
+                        <span class="s2">&quot;해당 인증번호를 인증번호 확인란에 기입하여 주세요.&quot;</span><span class="s0">;</span>
+        <span class="s0">try </span><span class="s1">{</span>
+
+            <span class="s1">MimeMessage message = mailSender.createMimeMessage()</span><span class="s0">;</span>
+            <span class="s1">MimeMessageHelper helper = </span><span class="s0">new </span><span class="s1">MimeMessageHelper(message</span><span class="s0">, true, </span><span class="s2">&quot;utf-8&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">helper.setFrom(setFrom)</span><span class="s0">;</span>
+            <span class="s1">helper.setTo(toMail)</span><span class="s0">;</span>
+            <span class="s1">helper.setSubject(title)</span><span class="s0">;</span>
+            <span class="s1">helper.setText(content</span><span class="s0">,true</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">mailSender.send(message)</span><span class="s0">;</span>
+
+        <span class="s1">}</span><span class="s0">catch</span><span class="s1">(Exception e) {</span>
+            <span class="s1">e.printStackTrace()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+<span class="s1">String num = Integer.toString(checkNum)</span><span class="s0">;</span>
+<span class="s0">return </span><span class="s1">num</span><span class="s0">;</span>
+
+    <span class="s1">}</span>
+
+    <span class="s1">@PostMapping(</span><span class="s2">&quot;verifyCode&quot;</span><span class="s1">) </span><span class="s3">// 이메일 인증 코드 검증</span>
+    <span class="s0">public </span><span class="s1">ResponseDto&lt;?&gt; verifyCode(@RequestBody Map&lt;String</span><span class="s0">, </span><span class="s1">String&gt; code) {</span>
+        <span class="s0">if</span><span class="s1">(EmailService.ePw.equals(code.get(</span><span class="s2">&quot;code&quot;</span><span class="s1">))) {</span>
+            <span class="s0">return new </span><span class="s1">ResponseDto&lt;&gt;(</span><span class="s0">true</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">else</span><span class="s1">{</span>
+            <span class="s0">return new </span><span class="s1">ResponseDto&lt;&gt;(</span><span class="s0">false</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">@Autowired</span>
+<span class="s1">AccountService accountService</span><span class="s0">;</span>
+    <span class="s3">// 아이디 중복 검사</span>
+    <span class="s1">@RequestMapping(value = </span><span class="s2">&quot;/memberIdChk&quot;</span><span class="s0">, </span><span class="s1">method = RequestMethod.POST)</span>
+    <span class="s1">@ResponseBody</span>
+    <span class="s0">public void </span><span class="s1">memberIdChkPOST(String username) </span><span class="s0">throws </span><span class="s1">Exception{</span>
+
+        <span class="s1">log.info(</span><span class="s2">&quot;memberIdChk() 진입&quot;</span><span class="s1">)</span><span class="s0">;</span>
+
+    <span class="s1">} </span><span class="s3">// memberIdChkPOST() 종료</span>
+    <span class="s3">//아이디 중복확인</span>
+<span class="s1">@Autowired</span>
+<span class="s0">private </span><span class="s1">IUserService userService</span><span class="s0">;</span>
+    <span class="s1">@GetMapping(</span><span class="s2">&quot;idCheck&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">@ResponseBody </span><span class="s0">int </span><span class="s1">idCheck(@RequestParam(</span><span class="s2">&quot;username&quot;</span><span class="s1">)String username) {</span>
+        <span class="s0">int </span><span class="s1">cnt=userService.idCheck(username)</span><span class="s0">;</span>
+        <span class="s1">log.info(</span><span class="s2">&quot;아이디체크&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">cnt</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@GetMapping(</span><span class="s2">&quot;emailCheck&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">@ResponseBody </span><span class="s0">int </span><span class="s1">emailCheck(@RequestParam(</span><span class="s2">&quot;email&quot;</span><span class="s1">)String email) {</span>
+        <span class="s0">int </span><span class="s1">cnt1=userService.emailCheck(email)</span><span class="s0">;</span>
+        <span class="s1">log.info(</span><span class="s2">&quot;아이디체크&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">cnt1</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+<span class="s1">@Autowired</span>
+    <span class="s0">private  </span><span class="s1">BBoardService BBoardService</span><span class="s0">;</span>
+    <span class="s1">@ResponseBody</span>
+    <span class="s1">@RequestMapping(value=</span><span class="s2">&quot;/userCheck&quot;</span><span class="s0">, </span><span class="s1">method=RequestMethod.POST)</span>
+    <span class="s0">public int </span><span class="s1">IdCheck(@RequestBody String username) </span><span class="s0">throws </span><span class="s1">Exception {</span>
+
+        <span class="s0">int </span><span class="s1">count = </span><span class="s4">0</span><span class="s0">;</span>
+        <span class="s1">count = BBoardService.userCheck(username)</span><span class="s0">;</span>
+
+        <span class="s0">return </span><span class="s1">count</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+
+
+<span class="s1">}</span></pre>
+</body>
+</html>

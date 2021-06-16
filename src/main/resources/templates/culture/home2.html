@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <style type="text/css">
+        .my-box { border:1px solid; padding:1px; }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="../css/main.css" />
+    <title>일본어학습</title>
+    <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
+    <meta charset="UTF-8">
+    <header th:insert="common/header.html"></header>
+    <!--1rest-->
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/3.6.0/jquery-ui.js"></script>
+    <script>
+        $(function() {
+            $("#chinese").click(function () {
+                var ko = $("#korean").val();
+                $.ajax({
+                    url: "chinese",
+                    type: "GET",
+                    dataType: "json",
+                    data: {korean: ko},
+                    success: function (v) {
+
+                    }, error: function (e) {
+                        var chinese = e.responseText;
+                        $("#china").text(chinese);
+                        console.log(e);
+
+                    }
+                });
+            });
+        });
+
+
+
+    </script>
+
+</head>
+<body>
+<div>
+<table border="1">
+    <thead>
+    <tr>
+        <th>한국어</th>
+        <th>일본어</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><input type="text" id="korean" name="korean"></td>
+        <td width="200" height="30" id="china" name="china"></td>
+
+    </tr>
+    </tbody>
+</table>
+<input type="button" id="chinese" value="번역">
+
+</div>
+<div id="center">
+<ul>
+    <li><a th:href="@{/chatting}">실시간채팅방</a></li>
+    <li><a th:href="@{/travel}">여행정보</a></li>
+    <li><a th:href="@{/book}">일본어 학습책</a></li>
+</ul>
+</div>
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

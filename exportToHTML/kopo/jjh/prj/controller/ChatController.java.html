@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>ChatController.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ChatController.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">kopo.jjh.prj.controller</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">kopo.jjh.prj.socket.ChatMessage</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.messaging.handler.annotation.MessageMapping</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.messaging.handler.annotation.Payload</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.messaging.handler.annotation.SendTo</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.messaging.simp.SimpMessageHeaderAccessor</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.stereotype.Controller</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.springframework.web.bind.annotation.GetMapping</span><span class="s0">;</span>
+
+<span class="s1">@Controller</span>
+<span class="s0">public class </span><span class="s1">ChatController {</span>
+
+    <span class="s1">@MessageMapping(</span><span class="s2">&quot;/chat.sendMessage&quot;</span><span class="s1">)</span>
+    <span class="s1">@SendTo(</span><span class="s2">&quot;/topic/public&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">ChatMessage sendMessage(@Payload ChatMessage chatMessage) {</span>
+        <span class="s0">return </span><span class="s1">chatMessage</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@MessageMapping(</span><span class="s2">&quot;/chat.addUser&quot;</span><span class="s1">)</span>
+    <span class="s1">@SendTo(</span><span class="s2">&quot;/topic/public&quot;</span><span class="s1">)</span>
+    <span class="s0">public </span><span class="s1">ChatMessage addUser(@Payload ChatMessage chatMessage</span><span class="s0">, </span><span class="s1">SimpMessageHeaderAccessor headerAccessor){</span>
+        <span class="s1">headerAccessor.getSessionAttributes().put(</span><span class="s2">&quot;username&quot;</span><span class="s0">, </span><span class="s1">chatMessage.getSender())</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">chatMessage</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+<span class="s1">}</span></pre>
+</body>
+</html>

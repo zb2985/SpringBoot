@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>CommentController.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+CommentController.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">kopo.jjh.prj.controller</span><span class="s0">;</span>
+
+
+<span class="s2">//5월31일 일단 중지</span>
+<span class="s2">/* 
+@Controller 
+@RequestMapping(&quot;/comment&quot;) 
+@Slf4j 
+public class CommentController { 
+ 
+ 
+    @Resource 
+    CommentService mCommentService; 
+ 
+    private static final Logger logger = LogManager.getLogger(CommentController.class); 
+ 
+    @RequestMapping(&quot;/cnolist&quot;) //댓글 리스트 
+    @ResponseBody 
+    private List&lt;CommentVO&gt; mCommentServiceList(Model model) throws Exception{ 
+log.info(&quot;cnolist&quot;); 
+        return mCommentService.commentListService(); 
+ 
+    } 
+ 
+    @RequestMapping(&quot;/insert&quot;) //댓글 작성 
+    @ResponseBody 
+    private int mCommentServiceInsert(@RequestParam Long bno, @RequestParam String content) throws Exception{ 
+ 
+        CommentVO comment = new CommentVO(); 
+        comment.setBno(bno); 
+        comment.setContent(content); 
+        //로그인 기능을 구현했거나 따로 댓글 작성자를 입력받는 폼이 있다면 입력 받아온 값으로 사용하면 됩니다. 저는 따로 폼을 구현하지 않았기때문에 임시로 &quot;test&quot;라는 값을 입력해놨습니다. 
+        comment.setWriter(&quot;test&quot;); 
+log.info(&quot;cnoinsert&quot;); 
+        return mCommentService.commentInsertService(comment); 
+    } 
+ 
+    @RequestMapping(&quot;/update&quot;) //댓글 수정 
+    @ResponseBody 
+    private int mCommentServiceUpdateProc(@RequestParam int cno, @RequestParam String content) throws Exception{ 
+ 
+        CommentVO comment = new CommentVO(); 
+        comment.setCno(cno); 
+        comment.setContent(content); 
+ 
+        return mCommentService.commentUpdateService(comment); 
+    } 
+ 
+    @RequestMapping(&quot;/delete/{cno}&quot;) //댓글 삭제 
+    @ResponseBody 
+    private int mCommentServiceDelete(@PathVariable int cno) throws Exception{ 
+ 
+        return mCommentService.commentDeleteService(cno); 
+    } 
+ 
+} 
+ 
+ 
+ */</span></pre>
+</body>
+</html>

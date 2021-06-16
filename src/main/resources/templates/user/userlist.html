@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 - 목록</title>
+    <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
+</head>
+<body>
+<header th:insert="common/header.html"></header>
+<div class="container">
+    <table class="table">
+        <thead class="thead-light">
+        <tr class="text-center">
+            <th scope="col">회원수</th>
+            <th scope="col">아이디</th>
+            <th scope="col">이름</th>
+            <th scope="col">조회수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="text-center" th:each="af : ${userList}">
+            <th scope="row">
+                <span th:text="${af.username_no}"></span>
+            </th>
+            <td>
+                <a th:href="@{'/user/' + ${af.username_no}}">
+                    <span th:text="${af.username}"></span>
+                </a>
+            </td>
+            <td>
+                <span th:text="${af.author}"></span>
+            </td>
+
+
+            <td>
+                <span th:text="${af.homeCnt}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="col-auto mr-auto"></div>
+
+        <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
+
+    </div>
+
+</div>
+<script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
+</html>

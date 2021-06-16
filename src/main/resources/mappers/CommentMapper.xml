@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kopo.jjh.prj.mapper.impl.CommentMapper">
+    <select id="commentCount" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM comment1
+    </select>
+    <select id="commentList" resultType="kopo.jjh.prj.dto.CommentVO">
+        SELECT
+            *
+        FROM comment1
+    </select>
+    <insert id="commentInsert" parameterType="kopo.jjh.prj.dto.CommentVO">
+        INSERT INTO
+            comment1 (CNO, BNO, CONTENT, WRITER, REG_DATE)
+        VALUES(#{cno},#{bno},#{content},#{writer},now())
+    </insert>
+    <update id="commentUpdate" parameterType="kopo.jjh.prj.dto.CommentVO">
+        UPDATE comment1
+        SET
+            CONTENT = #{content}
+        WHERE CNO = #{cno}
+    </update>
+    <delete id="commentDelete" parameterType="int">
+        DELETE FROM comment1 WHERE CNO = #{cno}
+    </delete>
+</mapper>
+
+
