@@ -1,6 +1,7 @@
 package kopo.jjh.prj.mapper.impl;
 
-import kopo.jjh.prj.domain.entity.CommentVO;
+
+import kopo.jjh.prj.dto.CommentVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

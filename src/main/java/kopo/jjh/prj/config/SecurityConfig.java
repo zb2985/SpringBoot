@@ -56,18 +56,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.authorizeRequests()
-                .antMatchers("/admin/**").authenticated()
 
+        http
+         //       .csrf().disable()
+
+                .headers()
+
+                .frameOptions().sameOrigin()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/admin/**").authenticated()
+                .antMatchers("/admin/**").hasRole("ADMIN")
 
                 .antMatchers("/","/loginUser","/passupdate","/list",
                         "/user/login/login-form","/user/login/callback",
                         "/naverlogin","/Infolist","/culture",
                         "/covid","/air","/chinese","/mails","/verifyCode"
                         ,"/check/findPw","/check/findPw/sendEmail"
-                        ,"/mailCheck","/idCheck","/emailCheck"
-                        ,"/post/{id}" ,"/ws","/chatting","/book"
-            ,"/exchange","/travel","news"
+                        ,"/mailCheck","/idCheck","/emailCheck","/newss","/exchange"
+                      ,"/ws","/book","/chat/**","/find_id_form"
+            ,"/exchange","/travel","/news","/Crawl","keywords","/find**","/rule","/comment**","/comment/**"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()

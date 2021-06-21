@@ -2,6 +2,8 @@ package kopo.jjh.prj.controller;
 
 import kopo.jjh.prj.dto.BoardDto;
 import kopo.jjh.prj.dto.FileDto;
+import kopo.jjh.prj.mapper.UserService;
+import kopo.jjh.prj.redis.MyRedisService;
 import kopo.jjh.prj.security.domain.SimpleUserDAO;
 import kopo.jjh.prj.security.dto.AccountForm;
 import kopo.jjh.prj.security.dto.UrlBuilder;
@@ -75,17 +77,18 @@ public class BoardController {
     private BoardService boardService;  //게시판
     private FileService fileService;    //파일업로드
     private IMovieRankService movieRankService; //강의
-
+private MyRedisService myRedisServcie;
     private String CLIENT_ID = "3_gqaAGqIO5b4lLHXhrD"; //애플리케이션 클라이언트 아이디값";
     private String CLI_SECRET = "DXqA0sX6q8"; //애플리케이션 클라이언트 시크릿값";
     private final String REDIRECT_URI = "http://localhost:8080/user/login/callback";
+      private UserService userService;
 
-    public BoardController(AccountService accountService, BoardService boardService, FileService fileService,  IMovieService movieService, IMovieRankService movieRankService ) {
-
+    public BoardController(UserService userService,MyRedisService myRedisServcie,AccountService accountService, BoardService boardService, FileService fileService,  IMovieService movieService, IMovieRankService movieRankService ) {
+this.userService =userService;
         this.accountService = accountService;
         this.boardService = boardService;
         this.fileService = fileService;
-
+this.myRedisServcie = myRedisServcie;
         this.movieService = movieService;
         this.movieRankService = movieRankService;
     }
@@ -130,11 +133,12 @@ public class BoardController {
         log.info("글쓰기페이지");
         return "board/post.html";
     }
-    @GetMapping("chatting")
-    public String chat() {
-        log.info("실시간채팅페이지,로그인해야됨");
-        return "culture/chatting.html";
+    @GetMapping("rule")
+    public String rule() {
+        log.info("rule페이지");
+        return "boardinfo/rule.html";
     }
+
     @GetMapping("passupdate")
     public String passupdate() {
         log.info("비밀번호찾기페이지");
@@ -186,7 +190,7 @@ public class BoardController {
 
         //log.info("model:"+model.toString());
         log.info("회원가입페이지");
-        return "user/login/register";
+        return "/user/login/resister";
 
     }
 
@@ -308,7 +312,15 @@ public class BoardController {
 
         return "redirect:/userlist";
     }
+   /* @DeleteMapping("user/{username_no}/passupdate")
+    public String updatepassword(@PathVariable("password") String password ,AccountForm accountForm) {
+        accountService.passdelete(password);
+        accountService.updatePass(password ,accountForm);
 
+        return "redirect:/";
+    }
+
+    */
 
     @GetMapping("post/{id}")
     public String detail(@PathVariable("id") Long id, Model model) {
@@ -454,25 +466,79 @@ public class BoardController {
     }
 
 
+    public JSONObject newss() {
+        JSONObject result = new JSONObject();
+        JSONArray arr = new JSONArray();
 
+        // 일본뉴스페이지
+        String url = "https://www.hani.co.kr/arti/international/japan/home01.html";
+        Document doc = null;
 
-//redis 연동예제
-/*
+        try {
+            // 환율정보 스크래핑
+            doc = Jsoup.connect(url).get();
+            // 국가명, 환율
+            Elements themesss = doc.select(".article-title");//내용
+            Elements summaryyy = doc.select(".article-prologue");       //제목
 
-    @RequestMapping(value = "myRedis/text")
-    @ResponseBody
-    public String myRedis(HttpServletRequest request, HttpServletResponse response) throws Exception {
+            for (int i = 0; i < 5; i++) {
 
-        log.info(this.getClass().getName() + "myRedis Start");
+                Element theme = themesss.get(i);
+                Element summary = summaryyy.get(i);
+                JSONObject obj = new JSONObject();
 
-        myRedisServcie.doSaveData();
-        log.info(this.getClass().getName() + "myRedis end");
+                obj.put("themee", themesss.text().split("2021"));
+                obj.put("summaryy", summaryyy.text().split("2021"));
+                arr.add(obj);
 
-        return "success";
+            }
+                result.put("items", arr);     //items
+
+        } catch (IOException e) {
+
+            result.put("result", "서버가 불안정합니다");
+            e.printStackTrace();
+
+        }
+
+        return result;
     }
 
 
- */
+    @GetMapping("newss")
+    @ResponseBody
+    @CrossOrigin
+    public JSONObject sendnewss(BoardController a_service) throws Exception {
+
+        return a_service.newss();
+
+    }
+
+
+
+//redis 연동예제
+
+
+
+    @GetMapping("chatting")
+    public String chat() {
+        log.info("실시간채팅페이지,로그인해야됨");
+        return "culture/chatting.html";
+    }
+
+
+
+    @RequestMapping(value="Crawl" ,method= RequestMethod.GET)
+    @ResponseBody
+    public void myRedisReecord5(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        log.info(this.getClass().getName() + "myRedis Start16");
+
+    myRedisServcie.doSaveData(newss(),news(),exchange());
+        log.info(this.getClass().getName() + "myRedis end");
+
+    }
+
 
 
 
@@ -515,12 +581,14 @@ public String login(){
         return "redirect:/";
     }
 
+
+
     @PostMapping("loginUser")
     public String createUser(@Valid AccountForm form, BindingResult result) throws MessagingException, UnsupportedEncodingException {
         if (result.hasErrors()) {
             //로그아웃
             log.info("로그아웃");
-            return "user/login/register";
+            return "usersearch";
         }
         accountService.createUser(form);
 
@@ -855,7 +923,6 @@ public String login(){
         return "/home/index.html";
 
     }
-
 
 
 }

@@ -2,6 +2,7 @@ package kopo.jjh.prj.controller;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import kopo.jjh.prj.mapper.IUserService;
+import kopo.jjh.prj.security.dto.MailDto;
 import kopo.jjh.prj.security.service.AccountService;
 import kopo.jjh.prj.security.service.BBoardService;
 import kopo.jjh.prj.security.service.EmailService;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.internet.MimeMessage;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -153,7 +155,27 @@ private IUserService userService;
         return count;
     }
 
+    //Email과 name의 일치여부를 check하는 컨트롤러
+    @GetMapping("/check/findPw")
+    public @ResponseBody Map<String, Boolean> pw_find(String email, String name){
+        Map<String,Boolean> json = new HashMap<>();
+        boolean pwFindCheck = userService.userEmailCheck(email,name);
 
+        System.out.println(pwFindCheck);
+        log.info("email,name확인"+pwFindCheck);
+        json.put("check", pwFindCheck);
+        return json;
+    }
+
+    //등록된 이메일로 임시비밀번호를 발송하고 발송된 임시비밀번호로 사용자의 pw를 변경하는 컨트롤러
+    @PostMapping("/check/findPw/sendEmail")
+    public @ResponseBody void sendEmail(String email, String name){
+
+        MailDto dto = emailService.createMailAndChangePassword(email, name);
+
+        emailService.mailSend(dto);
+        log.info("임시비밀번호 이메일발송"+dto);
+    }
 
 
 }

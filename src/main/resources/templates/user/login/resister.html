@@ -87,7 +87,11 @@
         </div>
         <button type="submit" class="btn btn-primary">등록</button>
     </form>
-
+<li>
+    <ui>
+    <a href="rule">이용약관(필수아님)</a>
+    </ui>
+</li>
 </div>
 
 
@@ -235,38 +239,29 @@ $(".compare").on("propertychange change keyup paste input", function() {
     $(document).ready(function(){
         // 회원가입처리
         $("form").submit(function(){
-            var name = $("input[name='name']");
-            if( name.val() =='') {
-                alert("성명을 입력하세요");
-                name.focus();
-                return false;
-            }
+
             var username = $("input[name='username']");
             if( username.val() =='') {
                 alert("아이디를 입력해주세요");
                 username.focus();
                 return false;
             }
-
-
-            var author = $("input[name='author']");
-            if( author.val() =='') {
-                alert("별명을 입력하세요");
-                author.focus();
-                return false;
-            }
             var email = $("input[name='email']");
             if(email.val() == ''){
                 alert('이메일을 입력하세요');
-                email.focus();
+
                 return false;
             } else {
                 var emailRegex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
                 if (!emailRegex.test(email.val())) {
                     alert('이메일 주소가 유효하지 않습니다. ex)abc@gmail.com');
-                    email.focus();
+
                     return false;
                 }
+            }
+            if(isCertification==false){
+                alert("메일 인증이 완료되지 않았습니다.");
+                return false;
             }
             var password = $("input[name='password']");
             var repassword = $("input[name='rePassword']");
@@ -311,10 +306,21 @@ $(".compare").on("propertychange change keyup paste input", function() {
 
 
 
-            if(isCertification==false){
-                alert("메일 인증이 완료되지 않았습니다.");
+
+            var name = $("input[name='name']");
+            if( name.val() =='') {
+                alert("성명을 입력하세요");
+                name.focus();
                 return false;
             }
+            var author = $("input[name='author']");
+            if( author.val() =='') {
+                alert("별명을 입력하세요");
+                author.focus();
+                return false;
+            }
+
+
             else
                 true;
         });

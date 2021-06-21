@@ -2,12 +2,16 @@
 package kopo.jjh.prj.redis;
 
 
+import kopo.jjh.prj.controller.CChatController;
 import kopo.jjh.prj.dto.MyJsonDTO;
 import kopo.jjh.prj.redis.Impl.IMyRedisMapper;
+
+import kopo.jjh.prj.socket.ChatMessage;
 import kopo.jjh.prj.util.CmmUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -22,17 +26,26 @@ import java.util.concurrent.TimeUnit;
 
 @Component("MyRedisMapper")
 @Slf4j
-public class MyRedisMapper implements IMyRedisMapper {
+public class MyRedisMapper implements IMyRedisMapper{
     private static final Logger logger = LogManager.getLogger(MyRedisMapper.class);
     @Autowired
     public RedisTemplate<String, Object> redisDB;
+    @Autowired
+   private MyRedisService MyredisService;
+   private ChatMessage chatMessage;
 
-
+@Autowired
+public CChatController chat;
     @Override
-    public void doSaveData() throws Exception {
+    public void doSaveData(JSONObject news,JSONObject newss ,JSONObject exchange)  {
         log.info(this.getClass().getName() + ".getCacheData service start!");
-        String redisKey = "1";
-        String saveData = "저장데이터";
+
+        String redisKey = "오늘의 단어";
+       String saveData = news.toString();
+        String redisKey1 = "뉴스 전체 목록";
+        String saveData1 = newss.toString();
+        String redisKey2 = "환율기록";
+        String saveData2 = exchange.toString();
         redisDB.setKeySerializer(new StringRedisSerializer());
         redisDB.setValueSerializer(new StringRedisSerializer());
 
@@ -46,6 +59,27 @@ public class MyRedisMapper implements IMyRedisMapper {
             redisDB.expire(redisKey, 2, TimeUnit.DAYS);
             log.info("No data");
         }
+        if (redisDB.hasKey(redisKey1)) {
+            String res1 = (String) redisDB.opsForValue().get(redisKey1);
+
+            log.info("res:" + res1);
+
+        } else {
+            redisDB.opsForValue().set(redisKey1, saveData1);
+            redisDB.expire(redisKey1, 2, TimeUnit.DAYS);
+            log.info("No data");
+        }
+        if (redisDB.hasKey(redisKey2)) {
+            String res2 = (String) redisDB.opsForValue().get(redisKey2);
+
+            log.info("res:" + res2);
+
+        } else {
+            redisDB.opsForValue().set(redisKey2, saveData2);
+            redisDB.expire(redisKey2, 2, TimeUnit.DAYS);
+            log.info("No data");
+        }
+
     }
 
     @Override
@@ -106,7 +140,7 @@ public class MyRedisMapper implements IMyRedisMapper {
         // 로그 찍기(추후 찍은 로그를 통해 이 함수에 접근했는지 파악하기 용이하다.)
         log.info(this.getClass().getName() + ".doSaveDataforList start!");
 
-        String redisKey = "Test02-List-JSON";
+        String redisKey = "오늘의 단어";
 
         /*
          * redis 저장 및 읽기에 대한 데이터 타입 지정(String 타입으로 지정함)
@@ -120,7 +154,7 @@ public class MyRedisMapper implements IMyRedisMapper {
 
         if (redisDB.hasKey(redisKey)) {
 
-            // Redis에 저장된 데이터 전체 가져오기
+            // Redis에 저장된 데이터 전체 가져오기ss
             // 데이터 인덱스는 0부터 시작하며, 세번째 인자값은 -1로 설정하면 모두 가져옴
             List<MyJsonDTO> pList = (List) redisDB.opsForList().range(redisKey, 0, -1);
 
@@ -134,9 +168,7 @@ public class MyRedisMapper implements IMyRedisMapper {
 
                 }
 
-                log.info("name : " + CmmUtil.nvl(rDTO.getName()));
-                log.info("email : " + CmmUtil.nvl(rDTO.getEmail()));
-                log.info("addr : " + CmmUtil.nvl(rDTO.getAddr()));
+
 
             }
 
@@ -144,9 +176,9 @@ public class MyRedisMapper implements IMyRedisMapper {
 
             pDTO = new MyJsonDTO();
 
-            pDTO.setName("이협건");
-            pDTO.setEmail("hglee67@kopo.ac.kr");
-            pDTO.setAddr("서울시 강서구");
+            pDTO.setMessage("이협건");
+
+
 
             redisDB.opsForList().rightPush(redisKey, pDTO);
 
@@ -154,9 +186,9 @@ public class MyRedisMapper implements IMyRedisMapper {
 
             pDTO = new MyJsonDTO();
 
-            pDTO.setName("홍길동");
-            pDTO.setEmail("dkhong@kopo.ac.kr");
-            pDTO.setAddr("서울시 양천구");
+            pDTO.setMessage("홍길동");
+
+
 
             redisDB.opsForList().rightPush(redisKey, pDTO);
 

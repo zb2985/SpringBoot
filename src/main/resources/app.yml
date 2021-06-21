@@ -12,4 +12,14 @@ openapi:
   service:
     url: http://openapi.data.go.kr/openapi/service/rest/Covid19
     key: iwmlm2wLyo4%2FWdSG7%2F9OHWYAKMBZ1rn2pbkIs4%2BIVr5QUvSn8x8rTXFITSAkbpeCJqJrN%2BerV8kiH6%2FwNwaiSg%3D%3D
-
+    openapi:
+service:
+        url: http://openapi.tago.go.kr/openapi/service/DmstcFlightNvgInfoService/getFlightOpratInfoList
+        key: iwmlm2wLyo4%2FWdSG7%2F9OHWYAKMBZ1rn2pbkIs4%2BIVr5QUvSn8x8rTXFITSAkbpeCJqJrN%2BerV8kiH6%2FwNwaiSg%3D%3D
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  freemarker:
+    cache: false

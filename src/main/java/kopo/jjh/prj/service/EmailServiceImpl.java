@@ -13,6 +13,7 @@ import java.util.Random;
 @Service
 public  class EmailServiceImpl implements OtherService{
 
+
     @Autowired
     JavaMailSender emailSender;
 
@@ -87,5 +88,6 @@ public  class EmailServiceImpl implements OtherService{
 
         return to;
     }
+
 
 }

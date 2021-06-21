@@ -12,29 +12,14 @@
 <body>
 <header th:insert="common/header.html"></header>
 <div class="container">
-    <form role="form" th:action="@{/Infopost}"  method="post" >
+    <form role="form" th:action="@{/saveinfo}"  method="post" >
         <div class="form-group row">
             <label for="inputTitle" class="col-sm-2 col-form-label"><strong>제목</strong></label>
             <div class="col-sm-10">
                 <input type="text" name="title" class="form-control" id="inputTitle">
             </div>
-        </div>
-        <div class="form-group row">
-            <label for="inputAuthor" class="col-sm-2 col-form-label"><strong>작성자</strong></label>
-            <!--로그인 아이디로 게시판 작성자 -->
-
-            <div class="col-sm-10">
-                <input type="text" name="author" class="form-control" id="inputAuthor" value="정지훈">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="inputCnt" class="col-sm-2 col-form-label"></label>
 
 
-            <div class="col-sm-10">
-                <input type="hidden" name="hitCnt" class="form-control" id="inputCnt" value=0>
-            </div>
-        </div>
         <div class="form-group row">
             <label for="inputContent" class="col-sm-2 col-form-label"><strong>내용</strong></label>
             <div class="col-sm-10">

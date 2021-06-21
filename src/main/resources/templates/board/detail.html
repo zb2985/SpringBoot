@@ -37,26 +37,127 @@
 
 
 </div>
-
-
-
-<div class="container" >
-
-    <form>
+<!--  댓글  -->
+<div class="container">
+    <label for="contents">comment</label>
+    <form name="commentInsertForm">
         <div class="input-group">
-            <input type="text"  name="replyer" id="replyer" th:value="${post.author}">
-            <input type="hidden" name="bno" id="bno" th:value="${post.id}"/>
-            <input type="text" class="form-control" id="replytext" name="replytext" placeholder="내용을 입력하세요.">
-            <input class="btn btn-default" type="button" name="insert" id="insert" value="입력"></input>
+            <input type="hidden" name="bno" th:value="${post.id}"/>
+
+            <input type="text" class="form-control" id="contents" name="contents" placeholder="내용을 입력하세요.">
+            <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" name="commentInsertBtn">등록</button>
+               </span>
         </div>
     </form>
 </div>
 
-
+<div class="container">
+    <div class="commentList"></div>
+</div>
 </div>
 
+
+
 <script
-    src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+//댓글 목록
+var bno = $("input[name=bno]").val(); //게시글 번호
+
+$('[name=commentInsertBtn]').click(function(){ //댓글 등록 버튼 클릭시
+
+    var insertData = $('[name=commentInsertForm]').serialize(); //commentInsertForm의 내용을 가져옴
+    commentInsert(insertData); //Insert 함수호출(아래)
+});
+
+
+function commentList(){
+$.ajax({
+url : '/comment/list',
+type : 'get',
+            data : {'bno':bno},
+    success : function(data){
+        var a ='';
+        $.each(data, function(key, value){
+            a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
+            a += '<div class="commentInfo'+value.cno+'">'+'댓글번호 : '+value.cno+' / 작성자 : '+value.writer;
+            a += '<a onclick="commentUpdate('+value.cno+',\''+value.content+'\');"> 수정 </a>';
+            a += '<a onclick="commentDelete('+value.cno+');"> 삭제 </a> </div>';
+    a += '<div class="commentContent'+value.cno+'"> <p> 내용 : '+value.content +'</p>';
+        a += '</div></div>';
+});
+
+$(".commentList").html(a);
+}
+});
+}
+
+//댓글 등록
+function commentInsert(insertData){
+$.ajax({
+url : '/comment/insert',
+type : 'post',
+data : insertData,
+success : function(data){
+if(data == 1) {
+commentList(); //댓글 작성 후 댓글 목록 reload
+$('[name=contents]').val('');
+}
+}
+});
+}
+
+//댓글 수정 - 댓글 내용 출력을 input 폼으로 변경
+function commentUpdate(cno, content){
+var a ='';
+
+a += '<div class="input-group">';
+    a += '<input type="text" class="form-control" name="contents_'+cno+'" value="'+content+'"/>';
+    a += '<span class="input-group-btn"><button class="btn btn-default" type="button" onclick="commentUpdateProc('+cno+');">수정</button> </span>';
+    a += '</div>';
+
+$('.commentContent'+cno).html(a);
+
+}
+
+//댓글 수정
+function commentUpdateProc(cno){
+var updateContent = $('[name=contents_'+cno+']').val();
+
+$.ajax({
+url : '/comment/update',
+type : 'post',
+data : {'contents' : updateContent, 'cno' : cno},
+success : function(data){
+if(data == 1) commentList(bno); //댓글 수정후 목록 출력
+}
+});
+}
+
+//댓글 삭제
+function commentDelete(cno){
+$.ajax({
+url : '/comment/delete/'+cno,
+type : 'post',
+success : function(data){
+if(data == 1) commentList(bno); //댓글 삭제후 목록 출력
+}
+});
+}
+
+
+
+
+$(document).ready(function(){
+commentList(); //페이지 로딩시 댓글 목록 출력
+});
+
+
+
+</script>
+
 
 <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </body>
@@ -64,128 +165,3 @@
 
 
 
-
-<div class="container">
-    <div class="commentList" id="commentList"></div>
-</div>
-<script type="text/javascript">
-    var bno = $("input[name=bno]").val(); //게시글 번호
-    var replyer = $("input[name=replyer]").val();
-
-
-    $(function() {
-        $("#insert").click(function () { //댓글 등록 버튼 클릭시
-            var textre = $("#replytext").val();
-            $.ajax({
-                url: "/post/" + bno + "/replies",
-                type: "GET",
-                data: {
-                    bno: bno
-                    , replyer: replyer,
-                    replytext: textre
-                },
-                dataType: "json",
-                success: function (data) {
-                    console.log(data);
-
-                }
-                , error: function (e) {
-                    console.log(e);
-
-                }
-            });
-        });
-    });
-
-
-
-
-/*
-    댓글 목록
-    function commentList(){
-        $.ajax({
-            url : '/comment/cnolist',
-            type : 'get',
-            data : {'bno': bno},
-            success : function(data){
-
-                var a ='';
-                $.each(data, function(key, value){
-                    a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
-                    a += '<div class="commentInfo'+value.cno+'">'+'댓글번호 : '+value.cno+' / 작성자 : '+value.writer;
-                    a += '<a onclick="commentUpdate('+value.cno+',\''+value.content+'\');"> 수정 </a>';
-                    a += '<a onclick="commentDelete('+value.cno+');"> 삭제 </a> </div>';
-                    a += '<div class="commentContent'+value.cno+'"> <p> 내용 : '+value.content +'</p>';
-                    a += '</div></div>';
-                });
-
-                $(".commentList").html(a);
-            }
-        });
-    }
-
-    댓글 등록
-    function commentInsert(insertData){
-        $.ajax({
-            url : '/comment/insert',
-            type : 'post',
-            data : insertData,
-            success : function(data){
-                if(data == 1) {
-                    commentList(); //댓글 작성 후 댓글 목록 reload
-                    $('[name=content]').val('');
-                }
-            }
-        });
-    }
-
-   댓글 수정 - 댓글 내용 출력을 input 폼으로 변경
-    function commentUpdate(cno, content){
-        var a ='';
-
-        a += '<div class="input-group">';
-        a += '<input type="text" class="form-control" name="content_'+cno+'" value="'+content+'"/>';
-        a += '<span class="input-group-btn"><button class="btn btn-default" type="button" onclick="commentUpdateProc('+cno+');">수정</button> </span>';
-        a += '</div>';
-
-        $('.commentContent'+cno).html(a);
-
-    }
-
-   댓글 수정
-    function commentUpdateProc(cno){
-        var updateContent = $('[name=content_'+cno+']').val();
-
-        $.ajax({
-            url : '/comment/update',
-            type : 'post',
-            data : {'content' : updateContent, 'cno' : cno},
-            success : function(data){
-                if(data == 1) commentList(bno); //댓글 수정후 목록 출력
-            }
-        });
-    }
-
-    댓글 삭제
-    function commentDelete(cno){
-        $.ajax({
-            url : '/comment/delete/{cno}'+cno,
-            type : 'post',
-            success : function(data){
-                if(data == 1) commentList(bno); //댓글 삭제후 목록 출력
-            }
-        });
-    }
-
-
-
-
-    $(document).ready(function(){
-        commentList(); //페이지 로딩시 댓글 목록 출력
-    });
-
-
-
- */
-
-</script>

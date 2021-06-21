@@ -1,6 +1,10 @@
 package kopo.jjh.prj.security.service;
 
+import kopo.jjh.prj.domain.repository.AccountRepository;
+import kopo.jjh.prj.security.dto.MailDto;
+import kopo.jjh.prj.util.EncryptionUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
@@ -11,11 +15,11 @@ import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Random;
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class EmailService {
-
+    public static final String FROM_ADDRESS = "본인의 이메일 주소를 입력하세요!";
     private final JavaMailSender emailSender;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     public static final String ePw = createKey();
@@ -67,5 +71,42 @@ public class EmailService {
 
     public String createCode(String ePw){
         return ePw.substring(0, 3) + "-" + ePw.substring(3, 6);
+    }
+    public MailDto createMailAndChangePassword(String email, String name){
+        String str = getTempPassword();
+        MailDto dto = new MailDto();
+        dto.setAddress(email);
+        dto.setTitle(name+"님의  임시비밀번호 안내 이메일 입니다.");
+        dto.setMessage("안녕하세요.  임시비밀번호 안내 관련 이메일 입니다." + "[" + name + "]" +"님의 임시 비밀번호는 "
+                + str + " 입니다.");
+        updatePassword(str,email);
+        log.info("dto="+dto);
+        return dto;
+    }
+
+    public void updatePassword(String str,String email){
+        String password = EncryptionUtils.encryptMD5(str);
+        log.info("update");
+        String username = AccountRepository.findUserByUsername(email).getUsername();
+        AccountRepository.updateUserPassword((username),password);
+    }
+
+
+    public String getTempPassword(){
+        char[] charSet = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+                'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+
+        String str = "";
+
+        int idx = 0;
+        for (int i = 0; i < 10; i++) {
+            idx = (int) (charSet.length * Math.random());
+            str += charSet[idx];
+        }
+        return str;
+    }
+
+
+    public void mailSend(MailDto dto) {
     }
 }

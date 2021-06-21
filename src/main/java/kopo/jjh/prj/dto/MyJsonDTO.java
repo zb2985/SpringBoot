@@ -6,32 +6,21 @@ import java.io.Serializable;
 
 public class MyJsonDTO implements Serializable {
 
-    private String name = "";
-    private String email = "";
-    private String addr = "";
+    private String message = "";
 
-    public String getName() {
-        return name;
+
+
+    public String getMessage() {
+        return message;
     }
 
-    public void setName(String name) {
-        this.name = name;
+
+
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public String getEmail() {
-        return email;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAddr() {
-        return addr;
-    }
-
-    public void setAddr(String addr) {
-        this.addr = addr;
-    }
 
 }

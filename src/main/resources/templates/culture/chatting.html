@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <header th:insert="common/header.html"></header>
+    <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <link rel="stylesheet">
     <style>
@@ -11,10 +12,7 @@
             box-sizing: border-box;
         }
 
-        html,body {
-            height: 100%;
-            overflow: hidden;
-        }
+
 
         body {
             margin: 0;
@@ -29,12 +27,12 @@
         }
 
         body:before {
-            height: 50%;
-            width: 100%;
+
+
             position: absolute;
             top: 0;
             left: 0;
-            background: #128ff2;
+
             content: "";
             z-index: 0;
         }
@@ -468,7 +466,7 @@
 
     usernameForm.addEventListener('submit', connect, true)
     messageForm.addEventListener('submit', sendMessage, true)
-    var socket = new SockJS('/ws');
+
     stompClient = Stomp.over(socket);
 
     stompClient.connect({}, onConnected, onError);

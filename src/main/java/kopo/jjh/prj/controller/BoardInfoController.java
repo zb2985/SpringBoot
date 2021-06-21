@@ -14,17 +14,17 @@ import java.util.List;
 @Controller
 @Slf4j
 public class BoardInfoController {
-   
+
     private static final Logger logger = LogManager.getLogger(BoardInfoController.class);
 
     private BoardInfoService boardInfoService;  //게시판
-   
-    
+
+
     public BoardInfoController(BoardInfoService boardInfoService) {
 
-      
+
         this.boardInfoService = boardInfoService;
-    
+
     }
 
 
@@ -34,14 +34,11 @@ public class BoardInfoController {
         List<BoardInfoDto> boardInfoDtoList = boardInfoService.getBoardList();
         model.addAttribute("postList", boardInfoDtoList);
         logger.info("글목록 실행");
-
-
         return "board/list.html";
     }
-
  */
 
-  
+
 
     @GetMapping("Infolist")
     public String list(Long id, Model model,  @RequestParam(value="page", defaultValue = "1") Integer pageNum) {
@@ -67,7 +64,7 @@ public class BoardInfoController {
         return "culture/home2.html";
     }
 
-   
+
     //파일업로드
     @PostMapping("Infopost")
 
@@ -132,4 +129,3 @@ public class BoardInfoController {
 
 
 }
-

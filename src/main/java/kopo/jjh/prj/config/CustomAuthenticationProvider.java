@@ -30,7 +30,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String password = (String)authentication.getCredentials();
 
         AccountContext accountContext = (AccountContext) userDetailsService.loadUserByUsername(username);
-
+        log.info("getPassword()날패스워드확인"+ accountContext.getPassword());
+        log.info("getPassword()날패스워드확인"+ password); //찐패스워드
         // password 일치하지 않으면!
         if(!passwordEncoder.matches(password,accountContext.getAccount().getPassword())){
             throw new BadCredentialsException("BadCredentialsException");
@@ -50,4 +51,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
+
+
 }

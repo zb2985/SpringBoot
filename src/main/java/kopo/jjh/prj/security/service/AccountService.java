@@ -5,7 +5,6 @@ import kopo.jjh.prj.security.domain.Account;
 import kopo.jjh.prj.security.dto.AccountForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -76,6 +74,7 @@ public class AccountService  {
             selectUser.setAuthor(accountForm.getAuthor());
         });
     }
+
 //회원수정 로직
    /* @Transactional
     public Long updateUser(AccountForm form) {
@@ -134,6 +133,7 @@ public class AccountService  {
     }
 
 
+
     public void updateAuthKey(Map<String, String> map) {
     }
 
@@ -142,8 +142,6 @@ public class AccountService  {
     ;}
 
 
-
-
-
-
+    public void updatePass(String password) {
+    }
 }

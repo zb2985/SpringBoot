@@ -1,10 +1,12 @@
 package kopo.jjh.prj.redis.Impl;
 
 
+import org.json.simple.JSONObject;
 
 public interface IMyRedisServcie {
 
-    public void doSaveData() throws Exception;
+    public void doSaveData(JSONObject news, JSONObject newss,JSONObject exchange) throws Exception
+            ;
 
     public void doSaveDataforList() throws Exception;
 

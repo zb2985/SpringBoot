@@ -5,7 +5,7 @@ import java.util.Date;
 public class CommentVO {
 
     private int cno;
-    private int bno;
+    private Long bno;
     private String content;
     private String writer;
     private Date reg_date;
@@ -18,11 +18,11 @@ public class CommentVO {
         this.cno = cno;
     }
 
-    public int getBno() {
+    public Long getBno() {
         return bno;
     }
 
-    public void setBno(int bno) {
+    public void setBno(Long bno) {
         this.bno = bno;
     }
 

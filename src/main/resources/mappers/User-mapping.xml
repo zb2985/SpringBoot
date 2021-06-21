@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kopo.jjh.prj.mapper.impl.UserDAO">
+
+    <!-- 로그인시 아이디와 비밀번호 확인 -->
+
+
+    <select id="findId" resultType="kopo.jjh.prj.security.dto.AccountForm">
+        select * from account where name=#{name} and email=#{email}
+    </select>
+
+    <select id="findPassword" resultType="kopo.jjh.prj.security.dto.AccountForm">
+        select * from account where username=#{username} and name=#{name} and email=#{email}
+    </select>
+
+    <update id="updatePassword">
+        update account set password=#{password} where username=#{username}
+    </update>
+
+</mapper>

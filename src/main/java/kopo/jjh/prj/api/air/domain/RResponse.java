@@ -36,7 +36,7 @@ public class RResponse {
         HttpEntity<HttpHeaders> entity = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(URI.create(url), HttpMethod.GET, entity, String.class);
-        log.info("좀되라 씨발="+response);
+        log.info("="+response);
         return response;
     }
 

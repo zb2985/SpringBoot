@@ -1,7 +1,14 @@
 package kopo.jjh.prj.service;
 
-/*
-@Service
+
+import kopo.jjh.prj.dto.CommentVO;
+import kopo.jjh.prj.mapper.impl.CommentMapper;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@Service("kopo.jjh.prj.service.CommentService")
 public class CommentService {
 
     @Resource(name="kopo.jjh.prj.mapper.impl.CommentMapper")
@@ -29,4 +36,4 @@ public class CommentService {
 }
 
 
- */
+

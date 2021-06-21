@@ -14,30 +14,7 @@
     <meta charset="UTF-8">
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/3.6.0/jquery-ui.js"></script>
-    <script>
-        $(function() {
-            $("#chinese").click(function () {
-                var ko = $("#korean").val();
-                $.ajax({
-                    url: "chinese",
-                    type: "GET",
-                    dataType: "json",
-                    data: {korean: ko},
-                    success: function (v) {
 
-                    }, error: function (e) {
-                        var chinese = e.responseText;
-                        $("#china").text(chinese);
-                        console.log(e);
-
-                    }
-                });
-            });
-        });
-
-
-
-    </script>
 
 </head>
 <body>
@@ -61,16 +38,44 @@
 <input type="button" id="chinese" value="번역">
 
 </div>
+<img src="https://www.jlpt.or.kr/image/202101/main_left_schedule.gif"/>
 <div id="center">
 <ul>
     <li><a th:href="@{/chatting}">실시간채팅방</a></li>
     <li><a th:href="@{/travel}">여행정보</a></li>
-    <li><a th:href="@{/book}">일본어 학습책</a></li>
+
 </ul>
 </div>
 
 
 
+
+
+
+<script>
+    $(function() {
+        $("#chinese").click(function () {
+            var ko = $("#korean").val();
+            $.ajax({
+                url: "chinese",
+                type: "GET",
+                dataType: "json",
+                data: {korean: ko},
+                success: function (v) {
+
+                }, error: function (e) {
+                    var chinese = e.responseText;
+                    $("#china").text(chinese);
+                    console.log(e);
+
+                }
+            });
+        });
+    });
+
+
+
+</script>
 </body>
 </html>
 
