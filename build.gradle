@@ -105,7 +105,7 @@ dependencies {
 // https://mvnrepository.com/artifact/commons-dbcp/commons-dbcp
 	implementation group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
 
-	compile "org.springframework.session:spring-session-data-redis"
+	//compile "org.springframework.session:spring-session-data-redis"
 	//redis
 	//implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.4.4'
 	//implementation group: 'redis.clients', name: 'jedis', version: '3.5.2'
