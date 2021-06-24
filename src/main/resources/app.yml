@@ -2,12 +2,8 @@ logging:
   config: classpath:log4j2.yml
 spring:
   data:
-    mongodb:
-      host: 192.168.145.132
-      port: 27017
-      database: MyDB
-      username: myUser
-      password: 1234
+
+
 openapi:
   service:
     url: http://openapi.data.go.kr/openapi/service/rest/Covid19
