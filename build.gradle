@@ -21,7 +21,7 @@ repositories {
 
 
 dependencies {
-	testCompile 'junit:junit:4.12'
+
 	// https://mvnrepository.com/artifact/com.github.scribejava/scribejava-apis
 	implementation group: 'com.github.scribejava', name: 'scribejava-apis', version: '8.3.1'
 // https://mvnrepository.com/artifact/org.scribe/scribe
@@ -138,7 +138,7 @@ dependencies {
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+
 	}
 	runtimeOnly 'org.webjars:bootstrap:4.5.0'
 
