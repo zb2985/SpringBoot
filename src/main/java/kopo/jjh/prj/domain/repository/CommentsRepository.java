@@ -1,7 +1,7 @@
 package kopo.jjh.prj.domain.repository;
 
-import io.lettuce.core.dynamic.annotation.Param;
 import kopo.jjh.prj.domain.entity.Comments;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

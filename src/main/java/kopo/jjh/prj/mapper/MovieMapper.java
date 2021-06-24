@@ -1,5 +1,5 @@
 package kopo.jjh.prj.mapper;
-
+/*
 
 import kopo.jjh.prj.dto.MovieDTO;
 import kopo.jjh.prj.mapper.IMovieMapper;
@@ -51,3 +51,5 @@ public class MovieMapper implements IMovieMapper {
 
 
 }
+
+ */
