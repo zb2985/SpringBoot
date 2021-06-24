@@ -65,11 +65,6 @@ dependencies {
 // https://mvnrepository.com/artifact/com.querydsl/querydsl-core
 	implementation group: 'com.querydsl', name: 'querydsl-core', version: '4.4.0'
 
-// mongoDB
-	// https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver
-	implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '3.12.8'
-// https://mvnrepository.com/artifact/org.mongodb/bson
-	implementation group: 'org.mongodb', name: 'bson', version: '4.2.3'
 
 // https://mvnrepository.com/artifact/org.springframework.data/spring-data-mongodb
 	implementation group: 'org.springframework.data', name: 'spring-data-mongodb', version: '3.2.0'
