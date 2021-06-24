@@ -1,18 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en" style="height: 100%;">
+<head style="height: 100%;">
     <style type="text/css">
-        .my-box { border:1px solid; padding:1px; }
+
+    #covid{
+        position: absolute;
+        bottom: 0px;
+        left: 37%;
+        width:40%;
+        height:50%;
+        margin:auto;
+        text_align:center;
+    }
+    table{
+      float: right;
+        border:1px solid; padding:1px;
+    }
+    #tra{
+        position: absolute;
+        bottom: 55%;
+        left: 37%;
+        width:20%;
+        height:20%;
+        margin:auto;
+        text_align:center;
+    }
+
+
+
     </style>
+
     <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
     <meta charset="UTF-8">
     <header th:insert="common/header.html"></header>
 </head>
-<body>
+<body style="background-color: beige">
+<div id="tra">
+<span>
+    <p>
+        <h3>한국 여행사이트</h3>
+    </p>
+    <p>
+        1. <a href="https://korean.visitkorea.or.kr/main/main.do#home">한국 관광공사 대한민국 구석</a>
+    </p>
+    <p>
+        2. <a href="https://blog.naver.com/NBlogTop.naver?isHttpsRedirect=true&blogId=korea_diary">한국 관광공사 국내여행 블로그</a>
+    </p>
+    <p>
+        3. <a href="https://www.ggtour.or.kr/">경기 관광 포털</a>
+    </p>
+</span>
+</div>
 
-<div class="my-box">
-    <h5>미국-일본 환율</h5>
+
+<div id="covid">
+<span>
+
+        <h5>코로나수치</h5>
+
+    <span>기준일 : <p class="card-text" id="stateDt" name="stateDt" ></p></span>
+
+
+
+        <div style="width:600px; "> <canvas id="myChart"></canvas> </div>
+
+
+    </span>
+</div>
+
+<div>
+
     <table>
+
+           <th style=" border:1px solid; background-color: #e8e8e8;">미국-일본 환율</th>
+
         <tr>
             <th>한화 : <td class="card-text" id="Exchange2" name="Exchange2" ></td>
         </tr>
@@ -25,54 +86,43 @@
         <tr>
             <th>상대원화 : <td class="card-text" id="Ja1" name="Ja1"></td></th>
         </tr>
-    </table>
-</div>
+
+        <tr/>
 
 
-<div class="my-box">
-    <h5>코로나수치</h5>
-    <table>
 
-        <tr>
-            <th>기준일 : <td class="card-text" id="stateDt" name="stateDt" ></td>
-        </tr>
-        <tr>
-            <th>치료중 환자 : <td class="card-text" id="careCnt" name="careCnt"></td></th>
-        </tr>
-        <tr>
-            <th>확진자 수 : </th><td class="card-text" id="decideCnt" name="decideCnt"></td></th>
-        </tr>
+            <th style=" border:1px solid; background-color: #e8e8e8;">국내 항공기 운행</th>
 
-    </table>
-</div>
 
-<div class="my-box">
-    <h5>국내 항공기 운행</h5>
-    <table>
+            <tr>
+                <th>출발공항 : <td class="card-text" id="arrAirportNm" name="arrAirportNm" >제주</td>
+            </tr>
+            <tr>
+                <th>출발시간 : <td class="card-text" id="arrPlandTime" name="arrPlandTime">202106121045</td></th>
+            </tr>
+            <tr>
+                <th>도착공항 : </th><td class="card-text" id="depAirportNm" name="depAirportNm">광주</td></th>
+            </tr>
+            <tr>
+                <th>도착시간 : </th><td class="card-text" id="depPlandTime" name="depPlandTime">202106120955</td></th>
+            </tr>
+            <tr>
+                <th>항공편명 : </th><td class="card-text" id="vihicleId" name="vihicleId">OZ8141</td></th>
+            </tr>
 
-        <tr>
-            <th>출발공항 : <td class="card-text" id="arrAirportNm" name="arrAirportNm" >제주</td>
-        </tr>
-        <tr>
-            <th>출발시간 : <td class="card-text" id="arrPlandTime" name="arrPlandTime">202106121045</td></th>
-        </tr>
-        <tr>
-            <th>도착공항 : </th><td class="card-text" id="depAirportNm" name="depAirportNm">광주</td></th>
-        </tr>
-        <tr>
-            <th>도착시간 : </th><td class="card-text" id="depPlandTime" name="depPlandTime">202106120955</td></th>
-        </tr>
-        <tr>
-            <th>항공편명 : </th><td class="card-text" id="vihicleId" name="vihicleId">OZ8141</td></th>
-        </tr>
-    </table>
-</div>
+        </table>
+    </div>
+
+
+
+
 
 
 
 
 <script
         src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
 <script type="text/javascript">
 
     $(document).ready(function exchange() {
@@ -110,10 +160,51 @@ console.log(v);
                 var stateDt = v.body.items[0].stateDt;
                 var careCnt = v.body.items[0].careCnt;
                 var decideCnt = v.body.items[0].decideCnt;
+                var examCnt = v.body.items[0].examCnt;
                 $("#stateDt").text(stateDt);
                 $("#careCnt").text(careCnt);
                 $("#decideCnt").text(decideCnt);
+                $("#examCnt").text(examCnt);
                 console.log(v);
+
+
+                var ctx = document.getElementById("myChart").getContext('2d');
+
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [ "치료자수", "감염자수", "검사인원수"],
+                        datasets: [{
+                            label: ["치료자수","감염자수","검사인원수"],
+                            data: [ careCnt,  decideCnt, examCnt],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+
+
+                            ],
+                            borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+
+
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: true, // default value. false일 경우 포함된 div의 크기에 맞춰서 그려짐.
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
+                    }
+                });
             }, error: function (e) {
 
                 console.log(e);
@@ -122,6 +213,11 @@ console.log(v);
         });
 
     });
+
+
+
+
+
 
 </script>
 <script>
@@ -158,5 +254,7 @@ console.log(v);
     });
 
 </script>
+
+
 </body>
 </html>

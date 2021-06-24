@@ -35,12 +35,14 @@ public class AirRestController {
     }
     @RequestMapping("chinese")
     @ResponseBody
-    public String Chinese(@RequestParam(value = "korean", defaultValue = "-")String korean,
-                          Model model) throws Exception{
+    public String[] Chinese(@RequestParam(value = "korean", defaultValue = "-")String korean,
+                            Model model) throws Exception{
         papagodto dd = new papagodto();
         dd.setKorean(korean);
         System.out.println(korean);
-        String china = demoService.getChinese(dd);
+        String[] china = demoService.getChinese(dd).split("\"");
+        model.addAttribute("chinese", china);
+
         log.info("dd="+dd);
         return china;
     }
@@ -111,16 +113,7 @@ public class AirRestController {
         }
 
 
-    @GetMapping("covid")
-    public Response getCovid(Model model){
 
-        ResponseEntity<String> responseEntity = mainService.getAPi();
-        Response response = mainService.parser(responseEntity.getBody());
-        model.addAttribute("covid", response);
-        log.info("covid="+response);
-        System.out.println(response);
-        return response;
-    }
     @GetMapping("air")
     public RResponse getair(Model model){
 
@@ -130,7 +123,23 @@ public class AirRestController {
         log.info("air="+response);
         return response;
     }
+    @ResponseBody
+    @CrossOrigin
+    @GetMapping("covid")
+    public Response getCovid(Model model,AirRestController arc){
+
+        ResponseEntity<String> responseEntity = mainService.getAPi();
+        Response response = mainService.parser(responseEntity.getBody());
+        model.addAttribute("covid", response);
+
+        log.info("covid="+response);
+        System.out.println(response);
+        return response;
     }
+
+
+
+}
      /*
         @RequestMapping(value = "myRedis/test03")
         @ResponseBody

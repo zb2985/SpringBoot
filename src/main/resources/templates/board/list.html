@@ -4,10 +4,21 @@
     <meta charset="UTF-8">
     <title>게시판 - 목록</title>
     <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
+    <style>
+        table{
+            table-layout: fixed;
+            width: auto;
+            height: auto;
+
+        }
+    </style>
 </head>
 <body>
 <header th:insert="common/header.html"></header>
-<div class="container">
+<div class="container" style="border:1px; ">
+    <div sec:authorize="isAuthenticated()" id="right">
+        <span sec:authentication="principal.author" style="color:#baea8c"></span>님 Q&A게시판입니다.
+    </div>
     <table class="table">
         <thead class="thead-light">
         <tr class="text-center">
@@ -51,7 +62,7 @@
     </div>
 
     <div>
-    <span th:each="pageNum : ${pageList}" th:inline="text">
+    <span th:each="pageNum : ${pageList}" >
         <a th:href="@{'/list?page=' + ${pageNum}}">[[${pageNum}]]</a>
     </span>
     </div>

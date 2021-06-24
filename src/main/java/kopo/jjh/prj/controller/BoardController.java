@@ -1,9 +1,13 @@
 package kopo.jjh.prj.controller;
 
+import kopo.jjh.prj.api.AirRestController;
+import kopo.jjh.prj.api.air.service.MainSService;
+import kopo.jjh.prj.api.service.MainService;
 import kopo.jjh.prj.dto.BoardDto;
 import kopo.jjh.prj.dto.FileDto;
-import kopo.jjh.prj.mapper.UserService;
+import kopo.jjh.prj.mapper.IUserService;
 import kopo.jjh.prj.redis.MyRedisService;
+import kopo.jjh.prj.security.domain.Account;
 import kopo.jjh.prj.security.domain.SimpleUserDAO;
 import kopo.jjh.prj.security.dto.AccountForm;
 import kopo.jjh.prj.security.dto.UrlBuilder;
@@ -42,7 +46,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,7 +75,10 @@ public class BoardController {
     SimpleUserDAO sud;
     private IMovieService movieService;
     private static final Logger logger = LogManager.getLogger(BoardController.class);
-
+    @Autowired
+    private kopo.jjh.prj.service.demoService demoService;
+    private MainService mainService;
+    private MainSService mainSService;
     private final AccountService accountService;    //회원가입 및 로그인
     private BoardService boardService;  //게시판
     private FileService fileService;    //파일업로드
@@ -81,9 +87,9 @@ private MyRedisService myRedisServcie;
     private String CLIENT_ID = "3_gqaAGqIO5b4lLHXhrD"; //애플리케이션 클라이언트 아이디값";
     private String CLI_SECRET = "DXqA0sX6q8"; //애플리케이션 클라이언트 시크릿값";
     private final String REDIRECT_URI = "http://localhost:8080/user/login/callback";
-      private UserService userService;
+      private IUserService userService;
 
-    public BoardController(UserService userService,MyRedisService myRedisServcie,AccountService accountService, BoardService boardService, FileService fileService,  IMovieService movieService, IMovieRankService movieRankService ) {
+    public BoardController(IUserService userService,MyRedisService myRedisServcie,AccountService accountService, BoardService boardService, FileService fileService,  IMovieService movieService, IMovieRankService movieRankService ) {
 this.userService =userService;
         this.accountService = accountService;
         this.boardService = boardService;
@@ -146,20 +152,14 @@ this.myRedisServcie = myRedisServcie;
     }
 
 
-    @RequestMapping("/naverlogin")
-    public String loginForm(HttpSession session, Model model) throws UnsupportedEncodingException {
-        String apiURL = getNaverOAuthURI(session);
-        model.addAttribute("naverApiURL", apiURL);
-        return "/user/login/login-form.html";
-    }
-    @RequestMapping("/loginWithoutForm/{username}")
+    @RequestMapping("/naverlogin/{username}")
     public String loginWithoutForm(@PathVariable(value="username") String username) {
     log.info("자동로그인");
         String roleStr = "ROLE_" + sud.getRolesByusername(username).toUpperCase();
         List<GrantedAuthority> roles = new ArrayList<>(1);
         //String roleStr = username.equals("admin") ? "ROLE_ADMIN" : "ROLE_GUEST";
         roles.add(new SimpleGrantedAuthority(roleStr));
-        User user = new User(username, "", roles);
+        Account user = new Account(username, "", roles);
         Authentication auth = new UsernamePasswordAuthenticationToken(user, null, roles);
         SecurityContextHolder.getContext().setAuthentication(auth);
         log.info("자동로그인끝났다");
@@ -281,18 +281,19 @@ this.myRedisServcie = myRedisServcie;
 
         return "user/userlist.html";
     }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     @GetMapping("user/{username_no}")
     public String userdetail(@PathVariable("username_no") Long username_no, Model model) {
         AccountForm accountForm = accountService.gethomeCnt(username_no);
         model.addAttribute("af", accountForm);
-        return "user/userdetail.html";
+        return "admin/userdetail.html";
     }
+    @PreAuthorize("hasRole('admin')")
     @GetMapping("user/useredit/{username_no}")
     public String useredit(@PathVariable("username_no") Long username_no, Model model) {
         AccountForm accountForm = accountService.gethomeCnt(username_no);
         model.addAttribute("af", accountForm);
-        return "user/useredit.html";
+        return "admin/useredit.html";
     }
 
 
@@ -304,7 +305,7 @@ this.myRedisServcie = myRedisServcie;
     }
 
 
-
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("user/{username_no}")
     public String delete(@PathVariable("username_no") long username_no) {
        accountService.delete(username_no);
@@ -487,8 +488,8 @@ this.myRedisServcie = myRedisServcie;
                 Element summary = summaryyy.get(i);
                 JSONObject obj = new JSONObject();
 
-                obj.put("themee", themesss.text().split("2021"));
-                obj.put("summaryy", summaryyy.text().split("2021"));
+                obj.put("themee", themesss.text().split("”"));
+                obj.put("summaryy", summaryyy.text().split("”"));
                 arr.add(obj);
 
             }
@@ -525,24 +526,22 @@ this.myRedisServcie = myRedisServcie;
         log.info("실시간채팅페이지,로그인해야됨");
         return "culture/chatting.html";
     }
-
-
+    /* 비밀번호 찾기 */
+    @RequestMapping(value = "/member/findpw", method = RequestMethod.GET)
+    public String findPwGET() throws Exception{
+        return "/member/findpw";
+    }
 
     @RequestMapping(value="Crawl" ,method= RequestMethod.GET)
     @ResponseBody
-    public void myRedisReecord5(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void myRedisReecord5(HttpServletRequest request, HttpServletResponse response, AirRestController arc) throws Exception {
 
         log.info(this.getClass().getName() + "myRedis Start16");
 
-    myRedisServcie.doSaveData(newss(),news(),exchange());
+        myRedisServcie.doSaveData(newss(),news(),exchange());
         log.info(this.getClass().getName() + "myRedis end");
 
     }
-
-
-
-
-
 
 
 
@@ -553,7 +552,20 @@ this.myRedisServcie = myRedisServcie;
         log.info("home controller");
         return "/user/user";
     }
+    // 아이디 찾기 폼
+    @GetMapping(value = "/find_id_form")
+    public String find_id_form()  {
+        return "/member/find_id_form.html";
+    }
 
+    // 아이디 찾기
+    @PostMapping(value = "/find_id")
+    public String find_id(HttpServletResponse response, @RequestParam("email") String email, Model md) throws Exception {
+        log.info("response = "+response);
+        md.addAttribute("username", userService.find_id(response, email));
+        return "/member/find_id.html";
+
+    }
 
 @GetMapping("/login")
 public String login(){
@@ -588,7 +600,7 @@ public String login(){
         if (result.hasErrors()) {
             //로그아웃
             log.info("로그아웃");
-            return "usersearch";
+            return "/";
         }
         accountService.createUser(form);
 
@@ -616,7 +628,8 @@ public String login(){
                 CLIENT_ID, redirectURI, state);
         session.setAttribute("state", state);
         model.addAttribute("apiURL", apiURL);
-        return "user/login/naverlogin";
+
+        return "/home/index.html";
     }
 
     /**

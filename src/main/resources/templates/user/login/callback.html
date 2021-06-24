@@ -1,11 +1,10 @@
-
-
 <!doctype html>
 <html lang="ko">
 <head>
     <script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
+    <header th:insert="common/header.html"></header>
 </head>
 <body>
 <script type="text/javascript">
@@ -22,7 +21,7 @@
 
 
         let body = $('body');
-        body.append('로그인 성공!');
+
         body.append('<h4>이메일:'+email+'</h4>');
         body.append('<h4>닉네임:'+nickname+'</h4>');
         body.append('<h4>이름:'+name+'</h4>');
@@ -30,5 +29,6 @@
     }
 </script>
 <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
 </body>
 </html>

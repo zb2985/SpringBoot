@@ -4,17 +4,28 @@
     <meta charset="UTF-8">
     <title th:text="@{'게시판 - ' + ${post.title}}"></title>
     <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
+    <style>
+        #contentType{
+            position: absolute;
+            background-color: white;
+            top: auto;
+            height:50%;
+            margin:auto;
+            text_align:center;
+        }
+    </style>
 </head>
 <body>
 <header th:insert="common/header.html"></header>
 <div class="container">
     <div class="card">
         <div class="card-body">
+
             <h5 class="card-title" th:text="@{${post.title} + ' - ' + ${post.author}}"></h5>
             <p class="card-text">
                 <small class="text-muted" th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></small>
             </p>
-            <p class="card-text" th:text="${post.content}"></p>
+            <p class="card-text" th:text="${post.content}" ></p>
             <div th:if="${post.fileId != null}">
                 <strong>첨부파일 : </strong>
                 <a class="card-text" th:href="@{'/download/' + ${post.fileId}}" th:text="파일다운로드"></a>

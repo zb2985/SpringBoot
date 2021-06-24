@@ -3,15 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Find ID</title>
-
-
-    <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
-    <meta charset="UTF-8">
-    <header th:insert="common/header.html"></header>
-    <!--1rest-->
-    <meta charset="UTF-8">
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-
     <style>
         :root { -
         -input-padding-x: 1.5rem; -
@@ -66,7 +57,20 @@
             padding: var(- -input-padding-y) var(- -input-padding-x);
         }
 
-
+        .form-label-group>label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: inline_block;
+            width: 100%;
+            margin-bottom: 0;
+            /* Override default `<label>` margin */
+            line-height: 1.5;
+            color: #495057;
+            border: 1px solid transparent;
+            border-radius: .25rem;
+            transition: all .1s ease-in-out;
+        }
 
         .form-label-group input::-webkit-input-placeholder {
             color: transparent;
@@ -100,10 +104,15 @@
             color: #777;
         }
     </style>
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/modern-business.css" rel="stylesheet">
 
     <!-- Bootstrap core JavaScript -->
-
-
+    <script src="jquery/jquery.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 <form method="post" class="form-signin" action="find_id" name="findform">
@@ -113,8 +122,8 @@
     </div>
 
     <div class="form-label-group">
-        <input type="text" id="email" name="email" class="form-control"/>
-        <label for="email">email</label>
+        <input type="text" id="phone" name="phone" class="form-control"/>
+        <label for="phone">phone</label>
     </div>
 
     <div class="form-label-group">
@@ -123,22 +132,22 @@
     </div>
 
     <!-- 이름과 전화번호가 일치하지 않을 때-->
-    <if test="${check == 1}">
+    <c:if test="${check == 1}">
         <script>
             opener.document.findform.name.value = "";
-            opener.document.findform.email.value = "";
+            opener.document.findform.phone.value = "";
         </script>
         <label>일치하는 정보가 존재하지 않습니다.</label>
-    </if>
+    </c:if>
 
     <!-- 이름과 비밀번호가 일치하지 않을 때 -->
-    <if test="${check == 0 }">
+    <c:if test="${check == 0 }">
         <label>찾으시는 아이디는' ${id}' 입니다.</label>
         <div class="form-label-group">
             <input class="btn btn-lg btn-secondary btn-block text-uppercase"
                    type="button" value="OK" onclick="closethewindow()">
         </div>
-    </if>
+    </c:if>
 
 </form>
 
@@ -148,4 +157,3 @@
     }
 </script>
 </body>
-</html>

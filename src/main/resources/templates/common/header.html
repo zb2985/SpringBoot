@@ -13,32 +13,41 @@
 
 
 <div class="navbar navbar-dark bg-dark shadow-sm mb-3">
-    <div class="container d-flex justify-content-between">
-        <div sec:authorize="isAuthenticated()">
-         <span sec:authentication="principal.author" style="color:navajowhite"></span>님 안녕하세요
-        </div>
-<div>
-        <p sec:authorize="isAnonymous()"> <a th:href="@{/loginUser}" >회원가입</a></p>
-        <p sec:authorize="isAnonymous()"> <a th:href="@{/login}" >로그인</a> </p>
-        <p sec:authorize="isAuthenticated()"> <a th:href="@{/logout}" >로그아웃</a> </p>
-</div>
+    <div>
+        <p style="border:1px solid blue; background-color:powderblue; color:white;" sec:authorize="isAnonymous()"> <a th:href="@{/loginUser}" >회원가입</a></p>
+        <p style="border:1px solid blue; background-color:powderblue; color:white;" sec:authorize="isAnonymous()"> <a th:href="@{/login}" >로그인</a> </p>
+        <p style="border:1px solid blue; background-color:powderblue;color:white;" sec:authorize="isAuthenticated()"> <a th:href="@{/logout}" >로그아웃</a> </p>
+    </div>
+    <div class="container d-flex justify-content-between" >
 
-        <a href="/" class="navbar-brand d-flex align-items-center">
+
+
+
+          <a href="/" class="navbar-brand d-flex align-items-center">
             <strong>메인</strong>
 
         </a>
-        <a href="/list" class="navbar-brand d-flex align-items-center">
+
+         <a href="/Infolist" class="navbar-brand d-flex align-items-center">
             <strong>자유게시판</strong>
         </a>
-        <a href="/Infolist" class="navbar-brand d-flex align-items-center">
-            <strong>QnA게시판</strong>
+         <a href="/list" class="navbar-brand d-flex align-items-center">
+            <strong>Q&A게시판</strong>
         </a>
         <a href="/userlist" class="navbar-brand d-flex align-items-center">
             <strong>회원목록</strong>
         </a>
-        <a href="/culture" class="navbar-brand d-flex align-items-center">
+          <a href="/culture" class="navbar-brand d-flex align-items-center">
             <strong>문화관</strong>
         </a>
+
+        <a th:href="@{/chatting}">실시간채팅방</a>
+              <a th:href="@{/travel}">여행정보</a>
+        <a th:href="@{/book}">교재</a>
+
+
+
+        </li>
 
     </div>
 </div>

@@ -24,7 +24,7 @@ private IMyRedisMapper myRedisMapper;
   private  SessionDisconnectEvent event;
 
 @Override
-    public void doSaveData(JSONObject news, JSONObject newss,JSONObject exchange) throws Exception{
+    public void doSaveData(JSONObject news, JSONObject newss, JSONObject exchange) throws Exception{
     log.info(this.getClass().getName()+".doSaveData Start!");
     myRedisMapper.doSaveData(news,newss,exchange);
 log.info(this.getClass().getName()+".doSaveData End!");
@@ -92,6 +92,7 @@ log.info(this.getClass().getName()+".doSaveData End!");
         log.info(this.getClass().getName() + ".doSaveDataforZSet End!");
 
     }
+
 
 
 }

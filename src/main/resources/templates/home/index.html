@@ -4,19 +4,12 @@
 <head>
     <style type="text/css">
         .my-box { border:1px solid; padding:1px; }
-    </style>
-    <style>
-        {
-            background-color: rgba(205, 128, 153, 0.57)
-        ;
-            width: 500px;
-            height: 500px;
+        #right{
+            float: right;
         }
     </style>
-    <style type="text/css">
-        .jqcloud{font:10px Helvetica,Arial,sans-serif;line-height:normal;overflow:hidden;position:relative}.jqcloud-word{margin:0;padding:0}.jqcloud-word.w1{color:#aab5f0;font-size:100%}.jqcloud-word.w2{color:#9ce;font-size:150%}.jqcloud-word.w3{color:#a0ddff;font-size:200%}.jqcloud-word.w4{color:#90c5f0;font-size:250%}.jqcloud-word.w5{color:#90a0dd;font-size:300%}.jqcloud-word.w6{color:#90c5f0;font-size:350%}.jqcloud-word.w7{color:#39d;font-size:400%}.jqcloud-word.w8{color:#0cf;font-size:450%}.jqcloud-word.w9{color:#0cf;font-size:500%}.jqcloud-word.w10{color:#0cf;font-size:550%}.jqcloud-word a{color:inherit;font-size:inherit;text-decoration:none}.jqcloud-word a:hover{color:#0cf}
 
-    </style>
+
     <script
             src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>메인</title>
@@ -39,8 +32,8 @@
             url: 'Crawl',
             type: 'get',
             success: function (v) {
-                var themee = v.items[1].themee;
-                var summaryy = v.items[1].summaryy;
+                var themee = v.items[0].themee;
+                var summaryy = v.items[0].summaryy;
 
 
                 $("#themee").text(themee);
@@ -83,26 +76,21 @@
             success: function News(v) {
 
 
-                var summaryy = v.items[0].summaryy[1];
-                var summaryy1 = v.items[0].summaryy[2];
-                var summaryy2 = v.items[0].summaryy[3];
-                var summaryy3 = v.items[0].summaryy[4];
-                var summaryy4 = v.items[0].summaryy[5];
-                var summaryy5 = v.items[0].summaryy[6];
-                var summaryy6 = v.items[0].summaryy[7];
+                var themee = v.items[0].themee[0];
+                var themee1 = v.items[0].themee[2];
+                var themee2 = v.items[0].themee[3];
+                var themee3 = v.items[0].themee[4];
+                var themee5 = v.items[0].themee[6];
 
 
 
 
 
 
-                $("#summaryy").text(summaryy);
-                $("#summaryy1").text(summaryy1);
-                $("#summaryy2").text(summaryy2);
-                $("#summaryy3").text(summaryy3);
-                $("#summaryy4").text(summaryy4);
-                $("#summaryy5").text(summaryy5);
-                $("#summaryy6").text(summaryy6);
+                $("#themee").text(themee);
+                $("#themee2").text(themee2);
+                $("#themee3").text(themee3);
+                $("#themee5").text(themee5);
 
 
 
@@ -134,7 +122,7 @@
         return 0
     }
 </script>
-<body>
+
 <H4 align=left>
     <SCRIPT LANGUAGE=JAVASCRIPT TYPE="TEXT/JAVASCRIPT">
         document.write("<font color=red>" + hitCt + "</font> 번째 방문자입니다.")
@@ -143,10 +131,15 @@
 </H4>
 <hr/>
 
-<div  class="container">
+<div  class="container" >
+
+
+
 
     <h5>오늘의 단어</h5>
-    <table>
+
+    <body>
+    <table style="border: 1px solid #444444;background-color: beige;">
 
 
         <tr >
@@ -163,31 +156,32 @@
 <br/>
 <div class="container">
     <h5>뉴스</h5>
-    <table>
+    <table style="border: 1px solid #444444;">
         <thead class="thead-light">
-
+            <th >제목</th>
         <tr >
-            <p>제목</p>
-            <th class="text-center">
-            <td class="card-text" id="summaryy" name="summary" scope="col" href="/arti/international/japan/1000069.html"></td>
 
 
-            <td class="card-text" id="summaryy1" name="summary1" scope="col" href="/arti/international/japan/1000069.html"></td>
+            <th  style=" border-spacing: 70px; border: 1px solid #444444; width : 250px; height: 200px;
+                 border-collapse: separate;" class="card-text" id="themee" name="themee" scope="col" href="/arti/international/japan/1000069.html"></th>
 
 
-            <td class="card-text" id="summaryy2" name="summary2" scope="col"></td>
 
 
-            <td class="card-text" id="summaryy3" name="summary3" scope="col"></td>
+            <th  style=" border-spacing: 70px; border: 1px solid #444444; width : 250px; height: 200px;
+                 border-collapse: separate;" class="card-text" id="themee2" name="themee2" scope="col"></th>
 
 
-            <td class="card-text" id="summaryy4" name="summary4" scope="col"></td>
+            <th  style=" border-spacing: 70px; border: 1px solid #444444; width : 250px; height: 200px;
+                 border-collapse: separate;" class="card-text" id="themee3" name="themee3" scope="col"></th>
 
 
-            <td class="card-text" id="summaryy5" name="summary5" scope="col"></td>
 
 
-            <td class="card-text" id="summaryy6" name="summary6" scope="col"></td>
+            <th  style=" border-spacing: 70px; border: 1px solid #444444; width : 250px; height: 200px;
+                 border-collapse: separate;" class="card-text" id="themee5" name="themee5" scope="col"></th>
+
+
 
             </th>
         </tr>

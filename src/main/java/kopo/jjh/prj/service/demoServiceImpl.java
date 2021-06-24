@@ -62,8 +62,10 @@ public class demoServiceImpl implements demoService{
                 for (Map.Entry<String, List<String>> entry : map.entrySet()) {
                     if (entry.getKey().equals("apikey")) {
                         result += "";
+                        log.info("result1 = "+ result);
                     } else {
                         result += "Key : " + entry.getKey() + " ,Value : " + entry.getValue();
+                        log.info("result2 = "+ result);
                     }
                 }
 
@@ -79,9 +81,12 @@ public class demoServiceImpl implements demoService{
             br.close();
 
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("인코딩 실패", e);
+
+            log.info("실패1");throw new RuntimeException("인코딩 실패", e);
+
         } catch (IOException e) {
             result = e.getMessage();
+            log.info("실패2");
         }
     log.info("result="+result);
 

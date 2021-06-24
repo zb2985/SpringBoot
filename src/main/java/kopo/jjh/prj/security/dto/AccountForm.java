@@ -67,4 +67,7 @@ public class AccountForm {
 
 
     public void updateAuthStatus(){this.authstatus ++;}
+
+    public void getUsername(String username) {
+    }
 }

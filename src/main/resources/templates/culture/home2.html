@@ -3,6 +3,34 @@
 <head>
     <style type="text/css">
         .my-box { border:1px solid; padding:1px; }
+        #covid{
+            position: absolute;
+            bottom: 30px;
+            left: 80%;
+
+            margin:auto;
+            text_align:center;
+        }
+        #centers{
+            position: absolute;
+            bottom: 40%;
+            left: 20%;
+            size: 700px;
+            margin:auto;
+            text_align:center;
+        }
+        #trans{
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+
+            margin:auto;
+            text_align:center;
+        }
+        td{
+            width:35%;
+            height: 35%;
+        }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <link rel="stylesheet" href="../css/main.css" />
@@ -17,9 +45,13 @@
 
 
 </head>
-<body>
+<body style="background-color: beige">
 <div>
-<table border="1">
+    <div sec:authorize="isAuthenticated()" id="right">
+        <span sec:authentication="principal.author" style="color:#baea8c"></span>님 문화관입니다
+    </div>
+    <div id="trans">
+<table border="1" style="background-color: beige">
     <thead>
     <tr>
         <th>한국어</th>
@@ -35,16 +67,16 @@
     </tr>
     </tbody>
 </table>
-<input type="button" id="chinese" value="번역">
+        <input  class="btn btn-primary" type="button" id="chinese" value="번역">
+    </div>
+
 
 </div>
-<img src="https://www.jlpt.or.kr/image/202101/main_left_schedule.gif"/>
+<img src="data:image/png;base64,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"
+     id="centers"/>
+<img src="https://www.jlpt.or.kr/image/202101/main_left_schedule.gif" id="covid"/>
 <div id="center">
-<ul>
-    <li><a th:href="@{/chatting}">실시간채팅방</a></li>
-    <li><a th:href="@{/travel}">여행정보</a></li>
 
-</ul>
 </div>
 
 
@@ -62,10 +94,15 @@
                 dataType: "json",
                 data: {korean: ko},
                 success: function (v) {
+                    console.log(v);
+                    var china = v;
+                    var chinese = china[27];
+                    $("#china").text(chinese);
+
 
                 }, error: function (e) {
-                    var chinese = e.responseText;
-                    $("#china").text(chinese);
+                    var chinese1 = e.responseText;
+                    $("#china").text(chinese1);
                     console.log(e);
 
                 }

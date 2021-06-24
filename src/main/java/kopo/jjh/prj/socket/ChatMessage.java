@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 @Resource
 public class ChatMessage {
 
-    public static kopo.jjh.prj.redis.ChatMessage.MessageType MessageType;
+
     private MessageType type;
     private String content;
     private String sender;

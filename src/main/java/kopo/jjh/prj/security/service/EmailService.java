@@ -1,6 +1,7 @@
 package kopo.jjh.prj.security.service;
 
 import kopo.jjh.prj.domain.repository.AccountRepository;
+import kopo.jjh.prj.mapper.impl.DAO;
 import kopo.jjh.prj.security.dto.MailDto;
 import kopo.jjh.prj.util.EncryptionUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class EmailService {
     private final JavaMailSender emailSender;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     public static final String ePw = createKey();
+private DAO mdao;
 
     private MimeMessage createMessage(String to)throws Exception{
         logger.info("보내는 대상 : "+ to);
@@ -109,4 +111,7 @@ public class EmailService {
 
     public void mailSend(MailDto dto) {
     }
+
+
+
 }

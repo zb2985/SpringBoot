@@ -9,4 +9,21 @@
     <select id="emailCheck" parameterType="String" resultType="Integer">
         SELECT COUNT(*) FROM account WHERE email = #{email}
     </select>
+    <!-- 회원 비밀번호 초기화 -->
+    <update id="updatePw" >
+        update account set password = #{password} where username = #{username}
+    </update>
+    <!-- 아이디 찾기에서 등록된 이메일인지 확인 -->
+    <select id="getFindId" parameterType="kopo.jjh.prj.security.dto.AccountForm" resultType="kopo.jjh.prj.security.dto.AccountForm">
+        SELECT username FROM account
+        WHERE email = #{email}
+    </select>
+    <select id="showEmail" parameterType="kopo.jjh.prj.security.dto.AccountForm" resultType="kopo.jjh.prj.security.dto.AccountForm">
+        SELECT email
+        FROM account
+        WHERE username = #{username}
+    </select>
+    <select id="findPassword" resultType="kopo.jjh.prj.security.dto.AccountForm">
+        select * from account where username=#{username} and name=#{name} and email=#{email}
+    </select>
 </mapper>

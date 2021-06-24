@@ -304,7 +304,9 @@
     </style>
 </head>
 <body>
-
+<div sec:authorize="isAuthenticated()" id="right">
+    <span sec:authentication="principal.author" style="color:#baea8c"></span>님 반갑습니다.
+</div>
 <div id="username-page">
     <div class="username-page-container">
         <h1 class="title">익명채팅방입니다. 닉네임을 입력해주세요

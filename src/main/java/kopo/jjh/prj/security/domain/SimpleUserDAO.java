@@ -13,7 +13,7 @@ public class SimpleUserDAO {
     @Autowired
     JdbcTemplate jt;
     public String getRolesByusername(String username) {
-        return jt.queryForObject("select role from simple_users where username=?", new Object[] {username}, (rs, rowNum) -> {
+        return jt.queryForObject("select role from account where username=?", new Object[] {username}, (rs, rowNum) -> {
             return rs.getString(1);
         });
     }

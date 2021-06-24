@@ -8,6 +8,9 @@
 <body>
 <header th:insert="common/header.html"></header>
 <div class="container">
+    <div sec:authorize="isAuthenticated()" id="right">
+        <span sec:authentication="principal.author" style="color:#baea8c"></span>님 자유게시판입니다.
+    </div>
     <table class="table">
         <thead class="thead-light">
         <tr class="text-center">

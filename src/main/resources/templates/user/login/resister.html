@@ -36,7 +36,7 @@
     <header th:insert="common/header.html"></header>
     <h1>회원가입</h1>
     <form role="form" th:action="@{/loginUser}" th:object="${userForm}" method="post" >
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+      <!--  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
 
         <div class="form-group">
             <label th:for="username">아이디</label>
@@ -81,10 +81,7 @@
             <input class="form-control"  field="*{author}" name="author" type="text" placeholder="별명">
         </div>
 
-        <div class="form-group">
-            <label th:for="role">권한</label>
-            <input class="form-control"  field="*{role}" name="role" type="text" placeholder="필수아님">
-        </div>
+
         <button type="submit" class="btn btn-primary">등록</button>
     </form>
 <li>
@@ -194,6 +191,7 @@ var isCertification = false;
                 data: {email:email},
 
                 success: function (v) {
+                    alert("이메일에 인증번호 입력");
                     cehckBox.attr("disabled",false);
                     boxWrap.attr("id","mail_check_input_box_true");
                     console.log("data : "+v);

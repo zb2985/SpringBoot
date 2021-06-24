@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @Slf4j
 @AllArgsConstructor
+@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
@@ -25,7 +27,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-
+       //메모리에 관리자권한 아이디 root/root 부여
+        auth.inMemoryAuthentication()
+                .withUser("root").password(passwordEncoder().encode("root")).roles("admin");
 //        String password = passwordEncoder().encode("1111");
 //
 //        auth.inMemoryAuthentication().withUser("user").password(password).roles("USER");
@@ -58,24 +62,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         http
-         //       .csrf().disable()
+          .csrf().disable()
 
                 .headers()
 
                 .frameOptions().sameOrigin()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/admin/**").authenticated()
-                .antMatchers("/admin/**").hasRole("ADMIN")
+
+
 
                 .antMatchers("/","/loginUser","/passupdate","/list",
                         "/user/login/login-form","/user/login/callback",
-                        "/naverlogin","/Infolist","/culture",
+                        "/naverlogin","/Infolist","/culture","/find_id_form","/find_id","/member/find_id.html",
                         "/covid","/air","/chinese","/mails","/verifyCode"
-                        ,"/check/findPw","/check/findPw/sendEmail"
-                        ,"/mailCheck","/idCheck","/emailCheck","/newss","/exchange"
-                      ,"/ws","/book","/chat/**","/find_id_form"
-            ,"/exchange","/travel","/news","/Crawl","keywords","/find**","/rule","/comment**","/comment/**"
+                        ,"/check/findPw","/check/findPw/sendEmail","/member/findpw"
+                        ,"/mailCheck","/idCheck","/emailCheck","/newss","/exchange","/mailCheck1"
+                      ,"/ws","/book","/chat/**","/find_id_form1" ,"/user/**" ,"/find_password_form1","/comment/update"
+            ,"/exchange","/travel","/news","/Crawl","keywords","/find**","/rule","/comment/list","/comment/insert","/comment/delete/**"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()

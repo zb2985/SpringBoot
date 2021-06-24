@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="limiter">
+    <div class="container-login100" style="background-color: #f4f3ef">
+        <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54 shadowbox">
+            <span class="login100-form-title p-b-49">Input Code</span>
+
+            <div class="container">
+                <div class="signup-content">
+                    <form name="f" action="/user/passChg" onsubmit="return certCheck(this);">
+
+                        <input type="text" name="username" style="display: none"
+                               value="${username}" readonly>
+
+                        <div class="form-group wrap-input100 validate-input" data-validate="Error">
+                            <span class="label-input100">CODE</span>
+                            <input class="input100" type="text" name="certNum" id="username" placeholder="Type your CODE" />
+                            <span id="emCheck" class="focus-input100" data-symbol="&#xf206;"></span>
+                        </div>
+                        <div class="msg m-b-15"></div>
+
+                        <div class="form-group">
+                            <div class="container-login100-form-btn">
+                                <div class="wrap-login100-form-btn">
+                                    <div class="login100-form-bgbtn"></div>
+                                    <button type="submit" name="submit" class="form-submit login100-form-btn btn"style="background-color: #5ABB92">
+                                        Next</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-right p-t-8 p-b-31"></div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="dropDownSelect1"></div>
+<script>
+    function certCheck(f){
+        if (f.certNum.value == "") {
+            alert("인증번호를 입력하세요.");
+            f.certNum.focus();
+            return false;
+        }
+        if(f.certNum.value != "<%=certNum%>") {
+
+            f.certNum.focus();
+            return false;
+        }
+    }
+</script>
+</body>
+</html>

@@ -4,9 +4,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 
 @Entity
@@ -51,6 +53,10 @@ public class Account implements Serializable {
         this.role = role;
         this.name = name;
     }
+
+    public Account(String username, String certified, List<GrantedAuthority> roles) {
+    }
+
     public void increaseHomeCount() {
         this.homeCnt ++;
     }

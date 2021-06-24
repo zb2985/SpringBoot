@@ -17,8 +17,8 @@ import java.util.List;
 @Service
 public class BoardInfoService {
     private InfoRepository infoRepository;
-    private static final int BLOCK_PAGE_NUM_COUNT = 5;
-    private static final int PAGE_POST_COUNT = 4;
+    private static final int BLOCK_PAGE_NUM_COUNT = 9;
+    private static final int PAGE_POST_COUNT = 10;
     private BoardInfomapper boardmapper;
     public BoardInfoService(InfoRepository infoRepository) {
         this.infoRepository = infoRepository;

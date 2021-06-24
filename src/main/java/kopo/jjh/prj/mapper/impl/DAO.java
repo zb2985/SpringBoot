@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 public interface DAO {
     int idCheck(String username);
     int emailCheck(String email);
+
 }

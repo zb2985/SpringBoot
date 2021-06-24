@@ -2,10 +2,10 @@
 package kopo.jjh.prj.redis;
 
 
+import kopo.jjh.prj.api.domain.Response;
 import kopo.jjh.prj.controller.CChatController;
 import kopo.jjh.prj.dto.MyJsonDTO;
 import kopo.jjh.prj.redis.Impl.IMyRedisMapper;
-
 import kopo.jjh.prj.socket.ChatMessage;
 import kopo.jjh.prj.util.CmmUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class MyRedisMapper implements IMyRedisMapper{
 @Autowired
 public CChatController chat;
     @Override
-    public void doSaveData(JSONObject news,JSONObject newss ,JSONObject exchange)  {
+    public void doSaveData(JSONObject news, JSONObject newss , JSONObject exchange)  {
         log.info(this.getClass().getName() + ".getCacheData service start!");
 
         String redisKey = "오늘의 단어";
@@ -46,6 +46,8 @@ public CChatController chat;
         String saveData1 = newss.toString();
         String redisKey2 = "환율기록";
         String saveData2 = exchange.toString();
+        String CovidKey = "코로나저장";
+        String saveData3 ="getCovid.toString()";
         redisDB.setKeySerializer(new StringRedisSerializer());
         redisDB.setValueSerializer(new StringRedisSerializer());
 
@@ -79,8 +81,19 @@ public CChatController chat;
             redisDB.expire(redisKey2, 2, TimeUnit.DAYS);
             log.info("No data");
         }
+        if (redisDB.hasKey(CovidKey)) {
+            String res = (String) redisDB.opsForValue().get(CovidKey);
 
+            log.info("res:" + res);
+
+        } else {
+            redisDB.opsForValue().set(CovidKey, saveData3);
+            redisDB.expire(CovidKey, 2, TimeUnit.DAYS);
+            log.info("No data");
+        }
     }
+
+
 
     @Override
     public void doSaveDataforList() throws Exception {
