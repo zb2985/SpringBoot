@@ -1,5 +1,5 @@
 package kopo.jjh.prj.mapper;
-
+/*
 import kopo.jjh.prj.dto.MovieDTO;
 import org.mybatis.spring.annotation.MapperScan;
 
@@ -15,3 +15,6 @@ public interface IMovieMapper {
 }
 
 
+
+
+ */
