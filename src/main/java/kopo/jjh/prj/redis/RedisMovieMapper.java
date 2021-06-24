@@ -1,3 +1,4 @@
+/*
 package kopo.jjh.prj.redis;
 
 import kopo.jjh.prj.dto.MovieDTO;
@@ -55,3 +56,5 @@ public class RedisMovieMapper implements IRedisMovieMapper {
 
 
 }
+
+ */

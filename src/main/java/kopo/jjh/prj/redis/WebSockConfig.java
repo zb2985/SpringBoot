@@ -1,3 +1,4 @@
+/*
 package kopo.jjh.prj.redis;
 
 import org.springframework.context.annotation.Configuration;
@@ -22,3 +23,5 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
                 .withSockJS();
     }
 }
+
+ */

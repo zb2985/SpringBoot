@@ -29,7 +29,7 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }
-}*/
+}
 
 
 import org.springframework.beans.factory.annotation.Value;
@@ -90,10 +90,15 @@ public class RedisConfig {
         return new ChannelTopic("chatroom");
     }
 
+}
+
+
+ */
     /**
      * redis에 발행(publish)된 메시지 처리를 위한 리스너 설정
      */
-}
+
+
 
 
 

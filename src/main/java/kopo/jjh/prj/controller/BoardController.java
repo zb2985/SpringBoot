@@ -6,7 +6,6 @@ import kopo.jjh.prj.api.service.MainService;
 import kopo.jjh.prj.dto.BoardDto;
 import kopo.jjh.prj.dto.FileDto;
 import kopo.jjh.prj.mapper.IUserService;
-import kopo.jjh.prj.redis.MyRedisService;
 import kopo.jjh.prj.security.domain.Account;
 import kopo.jjh.prj.security.domain.SimpleUserDAO;
 import kopo.jjh.prj.security.dto.AccountForm;
@@ -83,18 +82,18 @@ public class BoardController {
     private BoardService boardService;  //게시판
     private FileService fileService;    //파일업로드
     private IMovieRankService movieRankService; //강의
-private MyRedisService myRedisServcie;
+//private MyRedisService myRedisServcie;
     private String CLIENT_ID = "3_gqaAGqIO5b4lLHXhrD"; //애플리케이션 클라이언트 아이디값";
     private String CLI_SECRET = "DXqA0sX6q8"; //애플리케이션 클라이언트 시크릿값";
     private final String REDIRECT_URI = "http://localhost:8080/user/login/callback";
       private IUserService userService;
 
-    public BoardController(IUserService userService,MyRedisService myRedisServcie,AccountService accountService, BoardService boardService, FileService fileService,  IMovieService movieService, IMovieRankService movieRankService ) {
+    public BoardController(IUserService userService,AccountService accountService, BoardService boardService, FileService fileService,  IMovieService movieService, IMovieRankService movieRankService ) {
 this.userService =userService;
         this.accountService = accountService;
         this.boardService = boardService;
         this.fileService = fileService;
-this.myRedisServcie = myRedisServcie;
+//this.myRedisServcie = myRedisServcie;
         this.movieService = movieService;
         this.movieRankService = movieRankService;
     }
@@ -538,7 +537,7 @@ this.myRedisServcie = myRedisServcie;
 
         log.info(this.getClass().getName() + "myRedis Start16");
 
-        myRedisServcie.doSaveData(newss(),news(),exchange());
+       // myRedisServcie.doSaveData(newss(),news(),exchange());
         log.info(this.getClass().getName() + "myRedis end");
 
     }

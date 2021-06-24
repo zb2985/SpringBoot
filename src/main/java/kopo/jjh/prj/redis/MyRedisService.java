@@ -1,4 +1,4 @@
-
+/*
 package kopo.jjh.prj.redis;
 
 
@@ -32,6 +32,8 @@ log.info(this.getClass().getName()+".doSaveData End!");
 }
 
 
+ */
+
 
 
     /*
@@ -42,6 +44,7 @@ log.info(this.getClass().getName()+".doSaveData End!");
         }
 
      */
+/*
 @Override
     public void doSaveDataforList() throws Exception {
     log.info(this.getClass().getName()+"리스트구조실습");
@@ -97,5 +100,7 @@ log.info(this.getClass().getName()+".doSaveData End!");
 
 }
 
+
+ */
 
 
