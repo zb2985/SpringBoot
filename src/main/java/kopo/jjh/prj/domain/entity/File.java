@@ -15,13 +15,12 @@ import javax.persistence.Id;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class File {
 
-        @Id
-        @Builder.Default
-        @GeneratedValue
-        private Long id;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-        @Column(nullable = false)
-        private String origFilename;
+    @Column(nullable = false)
+    private String origFilename;
 
     @Column(nullable = false)
     private String filename;
