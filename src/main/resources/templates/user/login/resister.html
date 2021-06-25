@@ -81,7 +81,8 @@
             <input class="form-control"  field="*{author}" name="author" type="text" placeholder="별명">
         </div>
         <div class="form-group">
-            <input type="hidden" class="form-control"  field="*{roles}" name="roles" value="user">
+            <label th:for="roles">닉네임</label>
+            <input class="form-control"  field="*{roles}" name="roles" type="hidden" value="user">
         </div>
 
         <button type="submit" class="btn btn-primary">등록</button>
