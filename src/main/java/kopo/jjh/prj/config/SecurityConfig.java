@@ -85,9 +85,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .usernameParameter("username")
-                .loginPage("/login")                    // controller mapping
-                .loginProcessingUrl("/login_proc")      // th:action="@{/login_proc}"
-                .defaultSuccessUrl("/")
+                .loginPage("login")                    // controller mapping
+                .loginProcessingUrl("login_proc")      // th:action="@{/login_proc}"
+                .defaultSuccessUrl("")
 
                 .permitAll();
 
