@@ -1,6 +1,6 @@
 package kopo.jjh.prj.redis.Impl;
 
-
+/*
 import kopo.jjh.prj.api.domain.Response;
 import org.json.simple.JSONObject;
 
@@ -22,3 +22,5 @@ public interface IMyRedisMapper {
 
 }
 
+
+ */

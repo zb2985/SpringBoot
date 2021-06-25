@@ -1,6 +1,6 @@
 
 package kopo.jjh.prj.service.impl;
-
+/*
 import kopo.jjh.prj.dto.MelonDTO;
 import kopo.jjh.prj.dto.MelonRankDTO;
 import kopo.jjh.prj.dto.MelonSingerDTO;
@@ -23,6 +23,8 @@ public interface IMelonService {
     public List<MelonSongDTO> getSongForSinger() throws Exception;
 
 }
+
+ */
 
 
 

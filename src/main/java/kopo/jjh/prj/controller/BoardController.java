@@ -13,8 +13,8 @@ import kopo.jjh.prj.security.dto.UrlBuilder;
 import kopo.jjh.prj.security.service.AccountService;
 import kopo.jjh.prj.service.BoardService;
 import kopo.jjh.prj.service.FileService;
-import kopo.jjh.prj.service.IMovieRankService;
-import kopo.jjh.prj.service.IMovieService;
+//import kopo.jjh.prj.service.IMovieRankService;
+//import kopo.jjh.prj.service.IMovieService;
 import kopo.jjh.prj.util.MD5Generator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
@@ -72,7 +72,7 @@ import java.util.*;
 public class BoardController {
     @Autowired
     SimpleUserDAO sud;
-    private IMovieService movieService;
+   // private IMovieService movieService;
     private static final Logger logger = LogManager.getLogger(BoardController.class);
     @Autowired
     private kopo.jjh.prj.service.demoService demoService;
@@ -81,21 +81,21 @@ public class BoardController {
     private final AccountService accountService;    //회원가입 및 로그인
     private BoardService boardService;  //게시판
     private FileService fileService;    //파일업로드
-    private IMovieRankService movieRankService; //강의
+  //  private IMovieRankService movieRankService; //강의
 //private MyRedisService myRedisServcie;
     private String CLIENT_ID = "3_gqaAGqIO5b4lLHXhrD"; //애플리케이션 클라이언트 아이디값";
     private String CLI_SECRET = "DXqA0sX6q8"; //애플리케이션 클라이언트 시크릿값";
     private final String REDIRECT_URI = "http://localhost:8080/user/login/callback";
       private IUserService userService;
 
-    public BoardController(IUserService userService,AccountService accountService, BoardService boardService, FileService fileService,  IMovieService movieService, IMovieRankService movieRankService ) {
+    public BoardController(IUserService userService,AccountService accountService, BoardService boardService, FileService fileService  ) {
 this.userService =userService;
         this.accountService = accountService;
         this.boardService = boardService;
         this.fileService = fileService;
 //this.myRedisServcie = myRedisServcie;
-        this.movieService = movieService;
-        this.movieRankService = movieRankService;
+      //  this.movieService = movieService;
+     //   this.movieRankService = movieRankService;
     }
 
 
