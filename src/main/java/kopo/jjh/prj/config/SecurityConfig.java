@@ -87,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .loginPage("/login")                    // controller mapping
                 .loginProcessingUrl("/login_proc")      // th:action="@{/login_proc}"
-                .defaultSuccessUrl("")
+                .defaultSuccessUrl("/")
 
                 .permitAll();
 
