@@ -1,4 +1,4 @@
-
+/*
 package kopo.jjh.prj.service.impl;
 import kopo.jjh.prj.dto.MovieDTO;
 import kopo.jjh.prj.mapper.IMovieMapper;
@@ -55,4 +55,6 @@ public class MovieService implements IMovieService {
 
 
 }
+
+ */
 

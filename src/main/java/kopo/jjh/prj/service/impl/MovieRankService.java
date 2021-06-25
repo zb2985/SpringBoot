@@ -1,4 +1,4 @@
-
+/*
 package kopo.jjh.prj.service.impl;
 
 import kopo.jjh.prj.dto.MovieDTO;
@@ -56,3 +56,6 @@ public class MovieRankService implements IMovieRankService {
     }
 
 }
+
+
+ */
