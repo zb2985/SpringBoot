@@ -18,7 +18,7 @@ public class Board {
 
     public static kopo.jjh.prj.domain.entity.Board Board;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Column(length = 20, nullable = false)
