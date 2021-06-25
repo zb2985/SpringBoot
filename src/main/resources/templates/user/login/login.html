@@ -2,8 +2,8 @@
 <html lang="kr"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="https://www.thymeleaf.org"
-     >
 
+    >
 <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
 
 <script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
@@ -64,7 +64,6 @@
         <a href="/member/findpw" class="navbar-brand d-flex align-items-center">
             <strong>비밀번호찾기</strong>
         </a>
-    </form>
         <div th:if="${session.currentUser ne null}">
             <h3>이 부분은 로그인한 사용자한테만 보임</h3>
             <pre th:text="${session.currentUser}"></pre>
@@ -77,7 +76,7 @@
         <div id="naver_id_login"></div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
-
+    </form>
     <br/>
 
 </div>
