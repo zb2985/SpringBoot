@@ -1,5 +1,5 @@
 package kopo.jjh.prj.security.Handler;
-
+/*
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -36,3 +36,5 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
     }
 }
+
+ */
