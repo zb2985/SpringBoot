@@ -89,7 +89,7 @@ public class BoardInfoController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "redirect:/Infolist";
+        return "redirect:Infolist";
     }
 
 
@@ -115,13 +115,13 @@ public class BoardInfoController {
     @PutMapping("Infopost/edit/{id}")
     public String update(BoardInfoDto boardInfoDto) {
         boardInfoService.saveInfoPost(boardInfoDto);
-        return "redirect:/Infolist";
+        return "redirect:Infolist";
     }
 
     @DeleteMapping("Infopost/{id}")
     public String delete(@PathVariable("id") Long id) {
         boardInfoService.deleteInfoPost(id);
-        return "redirect:/Infolist";
+        return "redirect:Infolist";
     }
 
 

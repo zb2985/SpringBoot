@@ -13,8 +13,6 @@ import kopo.jjh.prj.security.dto.UrlBuilder;
 import kopo.jjh.prj.security.service.AccountService;
 import kopo.jjh.prj.service.BoardService;
 import kopo.jjh.prj.service.FileService;
-//import kopo.jjh.prj.service.IMovieRankService;
-//import kopo.jjh.prj.service.IMovieService;
 import kopo.jjh.prj.util.MD5Generator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
@@ -82,18 +80,18 @@ public class BoardController {
     private BoardService boardService;  //게시판
     private FileService fileService;    //파일업로드
   //  private IMovieRankService movieRankService; //강의
-//private MyRedisService myRedisServcie;
+
     private String CLIENT_ID = "3_gqaAGqIO5b4lLHXhrD"; //애플리케이션 클라이언트 아이디값";
     private String CLI_SECRET = "DXqA0sX6q8"; //애플리케이션 클라이언트 시크릿값";
     private final String REDIRECT_URI = "http://localhost:8080/user/login/callback";
       private IUserService userService;
 
-    public BoardController(IUserService userService,AccountService accountService, BoardService boardService, FileService fileService  ) {
+    public BoardController(IUserService userService,AccountService accountService, BoardService boardService, FileService fileService ) {
 this.userService =userService;
         this.accountService = accountService;
         this.boardService = boardService;
         this.fileService = fileService;
-//this.myRedisServcie = myRedisServcie;
+
       //  this.movieService = movieService;
      //   this.movieRankService = movieRankService;
     }
@@ -189,7 +187,7 @@ this.userService =userService;
 
         //log.info("model:"+model.toString());
         log.info("회원가입페이지");
-        return "/user/login/resister";
+        return "user/login/resister";
 
     }
 
@@ -528,7 +526,7 @@ this.userService =userService;
     /* 비밀번호 찾기 */
     @RequestMapping(value = "/member/findpw", method = RequestMethod.GET)
     public String findPwGET() throws Exception{
-        return "/member/findpw";
+        return "member/findpw";
     }
 
     @RequestMapping(value="Crawl" ,method= RequestMethod.GET)
@@ -537,7 +535,7 @@ this.userService =userService;
 
         log.info(this.getClass().getName() + "myRedis Start16");
 
-       // myRedisServcie.doSaveData(newss(),news(),exchange());
+
         log.info(this.getClass().getName() + "myRedis end");
 
     }
@@ -549,12 +547,12 @@ this.userService =userService;
     @GetMapping("user")
     public String dispUser(Model model) {
         log.info("home controller");
-        return "/user/user";
+        return "user/user";
     }
     // 아이디 찾기 폼
     @GetMapping(value = "/find_id_form")
     public String find_id_form()  {
-        return "/member/find_id_form.html";
+        return "member/find_id_form.html";
     }
 
     // 아이디 찾기
@@ -562,7 +560,7 @@ this.userService =userService;
     public String find_id(HttpServletResponse response, @RequestParam("email") String email, Model md) throws Exception {
         log.info("response = "+response);
         md.addAttribute("username", userService.find_id(response, email));
-        return "/member/find_id.html";
+        return "member/find_id.html";
 
     }
 
@@ -599,11 +597,11 @@ public String login(){
         if (result.hasErrors()) {
             //로그아웃
             log.info("로그아웃");
-            return "/";
+            return "";
         }
         accountService.createUser(form);
 
-        return "redirect:/";
+        return "redirect:";
     }
 
 
@@ -628,7 +626,7 @@ public String login(){
         session.setAttribute("state", state);
         model.addAttribute("apiURL", apiURL);
 
-        return "/home/index.html";
+        return "home/index.html";
     }
 
     /**
@@ -725,7 +723,7 @@ public String login(){
         } else {
             model.addAttribute("res", "Login failed!");
         }
-        return "/user/login/callback";
+        return "user/login/callback";
     }
     //네이버 인증
     public static void main(String[] args) {
@@ -849,7 +847,7 @@ public String login(){
         String res = requestToServer(apiURL);
         model.addAttribute("res", res);
         session.invalidate();
-        return "/user/login/callback";
+        return "user/login/callback";
     }
 
     /**
@@ -932,7 +930,7 @@ public String login(){
     @GetMapping("/")
     public String index() {
 
-        return "/home/index.html";
+        return "home/index.html";
 
     }
 
