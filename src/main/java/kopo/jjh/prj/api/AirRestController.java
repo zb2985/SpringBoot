@@ -46,6 +46,19 @@ public class AirRestController {
         log.info("dd="+dd);
         return china;
     }
+    @RequestMapping("english")
+    @ResponseBody
+    public String[] english(@RequestParam(value = "korean", defaultValue = "-")String korean,
+                            Model model) throws Exception{
+        papagodto dd = new papagodto();
+        dd.setKorean(korean);
+        System.out.println(korean);
+        String[] eng = demoService.getEnglish(dd).split("\"");
+        model.addAttribute("english", eng);
+
+        log.info("dd="+dd);
+        return eng;
+    }
     @PostMapping("/translate")
         protected String doPost (HttpServletRequest request, HttpServletResponse response) throws
                 ServletException, IOException {

@@ -56,6 +56,7 @@
     <tr>
         <th>한국어</th>
         <th>일본어</th>
+        <th>영  어</th>
 
     </tr>
     </thead>
@@ -63,12 +64,16 @@
     <tr>
         <td><input type="text" id="korean" name="korean"></td>
         <td width="200" height="30" id="china" name="china"></td>
+        <td width="200" height="30" id="eng" name="eng"></td>
 
     </tr>
     </tbody>
 </table>
-        <input  class="btn btn-primary" type="button" id="chinese" value="번역">
+        <input  class="btn btn-primary" type="button" id="chinese" value="일어번역">
+        <input  class="btn btn-primary" type="button" id="english" value="영어번역">
     </div>
+
+
 
 
 </div>
@@ -103,6 +108,35 @@
                 }, error: function (e) {
                     var chinese1 = e.responseText;
                     $("#china").text(chinese1);
+                    console.log(e);
+
+                }
+            });
+        });
+    });
+
+
+
+</script>
+<script>
+    $(function() {
+        $("#english").click(function () {
+            var ko = $("#korean").val();
+            $.ajax({
+                url: "english",
+                type: "GET",
+                dataType: "json",
+                data: {korean: ko},
+                success: function (v) {
+                    console.log(v);
+                    var eng = v;
+                    var english = eng[27];
+                    $("#eng").text(english);
+
+
+                }, error: function (e) {
+                    var english = e.responseText;
+                    $("#eng").text(english);
                     console.log(e);
 
                 }

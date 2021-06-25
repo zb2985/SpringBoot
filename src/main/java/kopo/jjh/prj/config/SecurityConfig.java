@@ -77,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/naverlogin","/Infolist","/culture","/find_id_form","/find_id","/member/find_id.html",
                         "/covid","/air","/chinese","/mails","/verifyCode"
                         ,"/check/findPw","/check/findPw/sendEmail","/member/findpw"
-                        ,"/mailCheck","/idCheck","/emailCheck","/newss","/exchange","/mailCheck1"
+                        ,"/mailCheck","/idCheck","/emailCheck","/newss","/exchange","/mailCheck1","/english"
                       ,"/ws","/book","/chat/**","/find_id_form1" ,"/user/**" ,"/find_password_form1","/comment/update"
             ,"/exchange","/travel","/news","/Crawl","keywords","/find**","/rule","/comment/list","/comment/insert","/comment/delete/**"
                 ).permitAll()
