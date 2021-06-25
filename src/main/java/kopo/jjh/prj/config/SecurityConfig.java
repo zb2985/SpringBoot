@@ -30,7 +30,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
        //메모리에 관리자권한 아이디 root/root 부여
         auth.inMemoryAuthentication()
                 .withUser("root").password(passwordEncoder().encode("root")).roles("admin");
-
 //        String password = passwordEncoder().encode("1111");
 //
 //        auth.inMemoryAuthentication().withUser("user").password(password).roles("USER");
