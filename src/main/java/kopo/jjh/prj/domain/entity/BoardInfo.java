@@ -18,7 +18,7 @@ public class BoardInfo {
 
     public static kopo.jjh.prj.domain.entity.BoardInfo BoardInfo;
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 20, nullable = false)
