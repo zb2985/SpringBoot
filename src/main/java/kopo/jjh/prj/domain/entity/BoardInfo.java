@@ -18,6 +18,7 @@ public class BoardInfo {
 
     public static kopo.jjh.prj.domain.entity.BoardInfo BoardInfo;
     @Id
+    @Builder.Default
     @GeneratedValue
     private Long id;
 
