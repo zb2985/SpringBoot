@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 @EnableAutoConfiguration
 @Slf4j
 @RestController
+
 public class AirRestController {
     @Autowired
  private demoService demoService;
@@ -134,6 +135,7 @@ public class AirRestController {
        RResponse response = mainSService.parser(responseEntity.getBody());
         model.addAttribute("air", response);
         log.info("air="+response);
+        log.info("비행기");
         return response;
     }
     @ResponseBody
@@ -144,7 +146,7 @@ public class AirRestController {
         ResponseEntity<String> responseEntity = mainService.getAPi();
         Response response = mainService.parser(responseEntity.getBody());
         model.addAttribute("covid", response);
-
+        log.info("코로나");
         log.info("covid="+response);
         System.out.println(response);
         return response;

@@ -22,6 +22,8 @@ public interface CommentMapper {
 
     // 댓글 삭제
     public int commentDelete(int cno) throws Exception;
+   
+    public int recommendupdate(CommentVO comment) throws Exception;
 
 }
 

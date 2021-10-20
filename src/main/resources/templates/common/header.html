@@ -4,6 +4,11 @@
       xmlns:th="https://www.thymeleaf.org"
 
 >
+<style>
+    div{
+        padding-right: 10px;
+    }
+</style>
 <head>
     <meta charset="UTF-8">
     <title>이웃나라일본</title>
@@ -14,9 +19,13 @@
 
 <div class="navbar navbar-dark bg-dark shadow-sm mb-3">
     <div>
-        <p style="border:1px solid blue; background-color:powderblue; color:white;" sec:authorize="isAnonymous()"> <a th:href="@{/loginUser}" >회원가입</a></p>
-        <p style="border:1px solid blue; background-color:powderblue; color:white;" sec:authorize="isAnonymous()"> <a th:href="@{/login}" >로그인</a> </p>
-        <p style="border:1px solid blue; background-color:powderblue;color:white;" sec:authorize="isAuthenticated()"> <a th:href="@{/logout}" >로그아웃</a> </p>
+        <p style="border:1px solid blue; color:white;" sec:authorize="isAnonymous()"> <a th:href="@{/loginUser}" >회원가입</a></p>
+        </div>
+    <div>
+    <p style="border:1px solid blue;  color:white;" sec:authorize="isAnonymous()"> <a th:href="@{/login}" >로그인</a> </p>
+    </div>
+    <div>
+        <p style="border:1px solid blue; color:white;" sec:authorize="isAuthenticated()"> <a th:href="@{/logout}" >로그아웃</a> </p>
     </div>
     <div>
         <h3 style="color: white">이웃나라일본</h3>
@@ -40,13 +49,20 @@
         <a href="/userlist" class="navbar-brand d-flex align-items-center">
             <strong>회원목록</strong>
         </a>
+        <a href="/travel" class="navbar-brand d-flex align-items-center">
+            <strong>여행정보</strong>
+            <a href="/chatting" class="navbar-brand d-flex align-items-center">
+                <strong>실시간채팅방</strong>
+            </a>
           <a href="/culture" class="navbar-brand d-flex align-items-center">
             <strong>문화관</strong>
         </a>
 
-        <a th:href="@{/chatting}">실시간채팅방</a>
-              <a th:href="@{/travel}">여행정보</a>
-        <a th:href="@{/book}">교재</a>
+
+        </a>
+        <a href="/book" class="navbar-brand d-flex align-items-center">
+            <strong>교재</strong>
+        </a>
 
 
 

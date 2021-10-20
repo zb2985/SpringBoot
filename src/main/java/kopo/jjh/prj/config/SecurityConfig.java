@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 @Configuration
 @EnableWebSecurity
 @Slf4j
@@ -22,20 +23,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+
     private final UserDetailsService userDetailsService;
 
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-       //메모리에 관리자권한 아이디 root/root 부여
+        //메모리에 관리자권한 아이디 root/root 부여
         auth.inMemoryAuthentication()
                 .withUser("root").password(passwordEncoder().encode("root")).roles("admin");
-//        String password = passwordEncoder().encode("1111");
-//
-//        auth.inMemoryAuthentication().withUser("user").password(password).roles("USER");
-//        auth.inMemoryAuthentication().withUser("manager").password(password).roles("MANAGER");
-//        auth.inMemoryAuthentication().withUser("admin").password(password).roles("ADMIN");
-//        auth.userDetailsService(userDetailsService);
+
         auth.authenticationProvider(authenticationProvider());
     }
 
@@ -62,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         http
-          .csrf().disable()
+                .csrf().disable()
 
                 .headers()
 
@@ -71,27 +68,39 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
 
-
-                .antMatchers("/","/loginUser","/passupdate","/list",
-                        "/user/login/login-form","/user/login/callback",
-                        "/naverlogin","/Infolist","/culture","/find_id_form","/find_id","/member/find_id.html",
-                        "/covid","/air","/chinese","/mails","/verifyCode"
-                        ,"/check/findPw","/check/findPw/sendEmail","/member/findpw"
-                        ,"/mailCheck","/idCheck","/emailCheck","/newss","/exchange","/mailCheck1","/english"
-                      ,"/ws","/book","/chat/**","/find_id_form1" ,"/user/**" ,"/find_password_form1","/comment/update"
-            ,"/exchange","/travel","/news","/Crawl","keywords","/find**","/rule","/comment/list","/comment/insert","/comment/delete/**"
+                .antMatchers("/", "/loginUser", "/passupdate", "/list", "/api/**", "/lists", "/search" , "/info/search",
+                        "/naverlogin", "/Infolist", "/culture", "/find_id_form", "/find_id", "/member/find_id.html",
+                        "covid**", "air**", "/chinese", "/mails", "/verifyCode", "/lists**", "/search"
+                        , "/check/findPw", "/check/findPw/sendEmail", "/member/findpw", "/info/**"
+                        , "/mailCheck", "/idCheck", "/emailCheck", "/newss", "/exchange", "/mailCheck1", "/english"
+                        , "/ws", "/book", "/chat/**", "/find_id_form1", "/user/**", "/find_password_form1", "/comment/update"
+                        , "/exchange", "/travel", "/news", "/Crawl", "keywords", "/find**", "/rule", "/comment/list", "/comment/insert", "/comment/delete/**", "post/{id}", "Infopost/{id}"
                 ).permitAll()
                 .anyRequest().authenticated()
+
                 .and()
                 .formLogin()
-
                 .loginPage("/login")                    // controller mapping
                 .loginProcessingUrl("/login_proc")      // th:action="@{/login_proc}"
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/lists")
+                .permitAll()
+                .and()
+                .logout()
+                .logoutSuccessUrl("/lists");
 
-                .permitAll();
+
 
     }
 
 
-}
+
+
+
+
+
+
+
+
+
+
+    }

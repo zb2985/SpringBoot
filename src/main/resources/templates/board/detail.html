@@ -54,7 +54,7 @@
     <form name="commentInsertForm">
         <div class="input-group">
             <input type="hidden" name="bno" th:value="${post.id}"/>
-
+            <input type="hidden" class="form-control" name="recommend" id="recommend" th:value=0>
             <input type="text" class="form-control" id="contents" name="contents" placeholder="내용을 입력하세요.">
             <span class="input-group-btn">
                     <button class="btn btn-default" type="button" name="commentInsertBtn">등록</button>
@@ -75,6 +75,8 @@
 
 <script>
 //댓글 목록
+var recommend = $("input[name=recommend]").val();
+
 var bno = $("input[name=bno]").val(); //게시글 번호
 
 $('[name=commentInsertBtn]').click(function(){ //댓글 등록 버튼 클릭시
@@ -93,10 +95,14 @@ type : 'get',
         var a ='';
         $.each(data, function(key, value){
             a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
+            a += '<div class="commentInfo'+value.bno+'">'+' 게시물번호 : '+value.bno ;
             a += '<div class="commentInfo'+value.cno+'">'+'댓글번호 : '+value.cno+' / 작성자 : '+value.writer;
-            a += '<a onclick="commentUpdate('+value.cno+',\''+value.content+'\');"> 수정 </a>';
-            a += '<a onclick="commentDelete('+value.cno+');"> 삭제 </a> </div>';
+            a += '<div class="recommend'+value.cno+'"> <p> 추천수 : '+value.recommend +'</p> <a onclick="reco('+value.cno+');"> 추천 (b)</a>';
+
+            a += '<a onclick="commentUpdate('+value.cno+',\''+value.content+'\');"> /수정 </a>';
+            a += '<a onclick="commentDelete('+value.cno+');"> /삭제 </a> </div>';
     a += '<div class="commentContent'+value.cno+'"> <p> 내용 : '+value.content +'</p>';
+
         a += '</div></div>';
 });
 
@@ -115,10 +121,13 @@ success : function(data){
 if(data == 1) {
 commentList(); //댓글 작성 후 댓글 목록 reload
 $('[name=contents]').val('');
+
 }
 }
 });
 }
+
+
 
 //댓글 수정 - 댓글 내용 출력을 input 폼으로 변경
 function commentUpdate(cno, content){
@@ -126,12 +135,15 @@ var a ='';
 
 a += '<div class="input-group">';
     a += '<input type="text" class="form-control" name="contents_'+cno+'" value="'+content+'"/>';
-    a += '<span class="input-group-btn"><button class="btn btn-default" type="button" onclick="commentUpdateProc('+cno+');">수정</button> </span>';
+       a += '<span class="input-group-btn"><button class="btn btn-default" type="button" onclick="commentUpdateProc('+cno+');">수정</button> </span>';
     a += '</div>';
 
 $('.commentContent'+cno).html(a);
 
 }
+
+//댓글 수정 - 댓글 내용 출력을 input 폼으로 변경
+
 
 //댓글 수정
 function commentUpdateProc(cno){
@@ -141,12 +153,29 @@ $.ajax({
 url : '/comment/update',
 type : 'post',
 data : {'contents' : updateContent, 'cno' : cno},
+
 success : function(data){
 if(data == 1) commentList(bno); //댓글 수정후 목록 출력
 }
 });
 }
+//댓글 수정
+function reco(cno){
 
+
+    $.ajax({
+        url : '/comment/reco',
+        type : 'post',
+        data : {'recommend' : recommend, 'cno' : cno},
+
+
+        success : function(data){
+            if(data == 1) commentList(bno); //댓글 수정후 목록 출력
+            console.log(data);
+
+        }
+    });
+}
 //댓글 삭제
 function commentDelete(cno){
 $.ajax({

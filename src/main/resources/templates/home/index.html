@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 
-<html lang="kr">
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <style type="text/css">
         .my-box { border:1px solid; padding:1px; }
         #right{
             float: right;
         }
+        #listfile{
+            position: absolute;
+            top : 30%;
+            left: 70%;
+            width:20%;
+            height:20%;
+            margin:auto;
+            text_align:center;
+        }
+
     </style>
 
 
@@ -24,47 +34,9 @@
 </head>
 
 </style>
-<script type="text/javascript">
-
-    $(document).ready(function exchange() {
-
-        $.ajax({
-            url: 'Crawl',
-            type: 'get',
-            success: function (v) {
-                var themee = v.items[0].themee;
-                var summaryy = v.items[0].summaryy;
 
 
-                $("#themee").text(themee);
-                $("#summaryy").text(summaryy);
-                console.log(v);
 
-            }});});
-
-
-</script>
-
-<script type="text/javascript">
-
-    $(document).ready(function exchange() {
-
-        $.ajax({
-            url: 'news',
-            type: 'get',
-            success: function (v) {
-                var theme = v.items[0].theme;
-                var summary = v.items[0].summary;
-
-
-                $("#theme").text(theme);
-                $("#summary").text(summary);
-
-                console.log(v);
-
-            }});});
-
-</script>
 
 <script type="text/javascript">
 
@@ -143,10 +115,10 @@
 
 
         <tr >
-            <th >한글 : <td class="card-text" id="theme" name="theme" ></td>
+            <th >한글 : 힘들다</td>
         </tr>
         <tr >
-            <th >일본어 : <td class="card-text" id="summary" name="summary"></td></th>
+            <th >일본어 : 苦労する</th>
         </tr>
         </tbody>
     </table>
@@ -154,38 +126,22 @@
 <br/>
 <br/>
 <br/>
+
+
 <div class="container">
     <h5>뉴스</h5>
     <table style="border: 1px solid #444444;">
         <thead class="thead-light">
             <th >제목</th>
-        <tr >
+        <tr>
 
-
+        </tr>
             <th  style=" border-spacing: 70px; border: 1px solid #444444; width : 250px; height: 200px;
-                 border-collapse: separate;" class="card-text" id="themee" name="themee" scope="col" href="/arti/international/japan/1000069.html"></th>
-
-
-
-
+                 border-collapse: separate;" class="card-text" id="themee" name="themee" scope="col" ></th>
             <th  style=" border-spacing: 70px; border: 1px solid #444444; width : 250px; height: 200px;
                  border-collapse: separate;" class="card-text" id="themee2" name="themee2" scope="col"></th>
-
-
             <th  style=" border-spacing: 70px; border: 1px solid #444444; width : 250px; height: 200px;
                  border-collapse: separate;" class="card-text" id="themee3" name="themee3" scope="col"></th>
-
-
-
-
-            <th  style=" border-spacing: 70px; border: 1px solid #444444; width : 250px; height: 200px;
-                 border-collapse: separate;" class="card-text" id="themee5" name="themee5" scope="col"></th>
-
-
-
-            </th>
-        </tr>
-
         </thead>
         <br/>
         <hr/>
@@ -197,7 +153,36 @@
     </table>
 </div>
 
+<div class="container" id="listfile">
 
+    <table class="table">
+        <thead class="thead-light">
+
+
+           <th>자유게시판 최근 글</th>
+
+
+        </thead>
+        <tbody>
+        <tr class="text-center" th:each="Infopost : ${boardInfoList1}">
+
+            <td>
+                    <span th:text="${Infopost.title}"></span>
+            </td>
+        </tr>
+
+
+        </tbody>
+    </table>
+    <div>
+    <span th:each="pageNum : ${pageInfoList1}" th:inline="text">
+        <a th:href="@{'/lists?page=' + ${pageNum}}">[[${pageNum}]]</a>
+    </span>
+    </div>
+
+
+
+</div>
 
 </body>
 </html>

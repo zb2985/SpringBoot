@@ -1,4 +1,4 @@
-/*
+
 package kopo.jjh.prj.redis;
 
 
@@ -17,22 +17,20 @@ import javax.annotation.Resource;
 @Service("MyRedisService")
 public class MyRedisService implements IMyRedisServcie {
     private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(MyRedisService.class);
-@Resource(name= "MyRedisMapper")
-private IMyRedisMapper myRedisMapper;
+    @Resource(name= "MyRedisMapper")
+    private IMyRedisMapper myRedisMapper;
 
-  private WebSocketEventListener webSocketEventListener;
-  private  SessionDisconnectEvent event;
+    private WebSocketEventListener webSocketEventListener;
+    private  SessionDisconnectEvent event;
 
-@Override
+    @Override
     public void doSaveData(JSONObject news, JSONObject newss, JSONObject exchange) throws Exception{
-    log.info(this.getClass().getName()+".doSaveData Start!");
-    myRedisMapper.doSaveData(news,newss,exchange);
-log.info(this.getClass().getName()+".doSaveData End!");
+        log.info(this.getClass().getName()+".doSaveData Start!");
+        myRedisMapper.doSaveData(news,newss,exchange);
+        log.info(this.getClass().getName()+".doSaveData End!");
 
-}
+    }
 
-
- */
 
 
 
@@ -44,13 +42,12 @@ log.info(this.getClass().getName()+".doSaveData End!");
         }
 
      */
-/*
-@Override
+    @Override
     public void doSaveDataforList() throws Exception {
-    log.info(this.getClass().getName()+"리스트구조실습");
-    myRedisMapper.doSaveDataforList();
-    log.info(this.getClass().getName()+"완료");
-}
+        log.info(this.getClass().getName()+"리스트구조실습");
+        myRedisMapper.doSaveDataforList();
+        log.info(this.getClass().getName()+"완료");
+    }
 
     @Override
     public void doSaveDataforListJSON() throws Exception {
@@ -100,7 +97,5 @@ log.info(this.getClass().getName()+".doSaveData End!");
 
 }
 
-
- */
 
 

@@ -18,7 +18,7 @@ public class BoardDto {
     private int hitCnt;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
-
+    private int categori;
     public Board toEntity() {
         Board build = Board.builder()
                 .id(id)
@@ -27,12 +27,13 @@ public class BoardDto {
                 .content(content)
                 .fileId(fileId)
                 .hitCnt(hitCnt)
+                .categori(categori)
                 .build();
         return build;
     }
 
     @Builder
-    public BoardDto(Long id, String author, String title, String content, Long fileId, int hitCnt ,LocalDateTime createdDate, LocalDateTime modifiedDate) {
+    public BoardDto(Long id, String author, String title, String content, Long fileId, int hitCnt ,LocalDateTime createdDate, LocalDateTime modifiedDate ,int categori) {
         this.id = id;
         this.author = author;
         this.title = title;
@@ -41,5 +42,6 @@ public class BoardDto {
         this.hitCnt = hitCnt;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
+        this.categori = categori;
     }
 }

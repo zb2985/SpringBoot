@@ -15,15 +15,23 @@
     </select>
     <insert id="commentInsert" parameterType="kopo.jjh.prj.dto.CommentVO">
         INSERT INTO
-            comment1 (CNO, BNO, CONTENT, WRITER, REG_DATE)
-        VALUES(#{cno},#{bno},#{content},#{writer},now())
+            comment1 (CNO, BNO, CONTENT, WRITER, RECOMMEND, REG_DATE)
+        VALUES(#{cno},#{bno},#{content},#{writer},#{recommend},now())
     </insert>
     <update id="commentUpdate" parameterType="kopo.jjh.prj.dto.CommentVO">
         UPDATE comment1
         SET
             CONTENT = #{content}
+
         WHERE CNO = #{cno}
     </update>
+
+<update id="recommendupdate" parameterType="kopo.jjh.prj.dto.CommentVO">
+UPDATE comment1
+SET
+    RECOMMEND = #{recommend}
+WHERE CNO = #{cno}
+</update>
     <delete id="commentDelete" parameterType="int">
         DELETE FROM comment1 WHERE CNO = #{cno}
     </delete>

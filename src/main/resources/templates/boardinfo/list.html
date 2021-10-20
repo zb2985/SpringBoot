@@ -49,9 +49,18 @@
         <div class="col-auto">
             <a class="btn btn-primary" th:href="@{/Infopost}" role="button">글쓰기</a>
         </div>
-        <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
+        <script type='text/javascript' src='/www.midijs.net/lib/midi.js'></script>
 
     </div>
+<form action="/info/search" method="GET">
+    <div class="search">
+        <input name="keyword" type="text" placeholder="검색어를 입력해주세요">
+
+    </div>
+
+    <button>검색하기</button>
+</form>
+
 
     <div>
     <span th:each="pageNum : ${pageInfoList}" th:inline="text">

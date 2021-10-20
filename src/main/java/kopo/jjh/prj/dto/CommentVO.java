@@ -1,22 +1,20 @@
 package kopo.jjh.prj.dto;
 
-import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.Date;
+@Getter
+@Setter
 public class CommentVO {
 
+    public int recommend;
     private int cno;
     private Long bno;
     private String content;
     private String writer;
     private Date reg_date;
 
-    public int getCno() {
-        return cno;
-    }
-
-    public void setCno(int cno) {
-        this.cno = cno;
-    }
 
     public Long getBno() {
         return bno;
@@ -29,6 +27,7 @@ public class CommentVO {
     public String getContent() {
         return content;
     }
+
 
     public void setContent(String content) {
         this.content = content;
@@ -49,5 +48,6 @@ public class CommentVO {
     public void setReg_date(Date reg_date) {
         this.reg_date = reg_date;
     }
+
 
 }

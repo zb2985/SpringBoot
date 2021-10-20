@@ -1,7 +1,7 @@
 package kopo.jjh.prj.redis.Impl;
 
 
-/*
+import org.json.simple.JSONObject;
 
 public interface IMyRedisServcie {
 
@@ -21,4 +21,4 @@ public interface IMyRedisServcie {
 }
 
 
- */
+

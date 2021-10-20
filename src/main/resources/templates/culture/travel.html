@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" style="height: 100%;">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout/default" xmlns:appearance="http://www.w3.org/1999/xhtml">
+
 <head style="height: 100%;">
     <style type="text/css">
 
     #covid{
         position: absolute;
         bottom: 0px;
-        left: 37%;
-        width:40%;
-        height:50%;
-        margin:auto;
-        text_align:center;
+        left: 10%;
+        width:20%;
+        height:20%;
     }
     table{
       float: right;
@@ -18,8 +20,34 @@
     }
     #tra{
         position: absolute;
+        top : 25%;
+        left: 10%;
+        width:20%;
+        height:20%;
+
+    }
+    #trans{
+        position: absolute;
+        top : 30%;
+        left: 40%;
+        width:20%;
+        height:20%;
+        margin:auto;
+        text_align:center;
+    }
+    #table{
+        position: absolute;
+        bottom: 30%;
+        left: 70%;
+        width:20%;
+        height:20%;
+        margin:auto;
+        text_align:center;
+    }
+    #table2{
+        position: absolute;
         bottom: 55%;
-        left: 37%;
+        left: 70%;
         width:20%;
         height:20%;
         margin:auto;
@@ -27,9 +55,8 @@
     }
 
 
-
     </style>
-
+<!-- https://currencylayer.com/ -->
     <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
     <meta charset="UTF-8">
     <header th:insert="common/header.html"></header>
@@ -68,29 +95,31 @@
     </span>
 </div>
 
-<div>
+<div id="table">
 
     <table>
 
            <th style=" border:1px solid; background-color: #e8e8e8;">미국-일본 환율</th>
 
         <tr>
-            <th>한화 : <td class="card-text" id="Exchange2" name="Exchange2" ></td>
+            <th>한화 : <td class="card-text" id="Exchange2" name="Exchange2" ></td></th>
         </tr>
         <tr>
             <th>상대원화 : <td class="card-text" id="Exchange1" name="Exchange1"></td></th>
         </tr>
         <tr>
-            <th>한화 : <td class="card-text" id="Ja2" name="Ja2" ></td>
+            <th>한화 : <td class="card-text" id="Ja2" name="Ja2" ></td></th>
         </tr>
         <tr>
             <th>상대원화 : <td class="card-text" id="Ja1" name="Ja1"></td></th>
         </tr>
 
-        <tr/>
 
 
-
+    </table>
+    </div>
+<div id="table2">
+    <table>
             <th style=" border:1px solid; background-color: #e8e8e8;">국내 항공기 운행</th>
 
 
@@ -114,15 +143,44 @@
     </div>
 
 
+<div id="trans">
+
+
+        <div class="col" >
+            <h3>환율 계산</h3>
+        </div>
+
+
+        <div class="col-md-6" >
+
+            <div><label>송금 국가 :</label> <span>미국(USD)</span></div>
+            <div><label>수취 국가 :</label>
+                <select name="receive_country" class="custom-select col-sm-6" id="receive_country" onchange = "getExchangeRates()">
+                    <option selected value="dft">국가 선택</option>
+                    <option value="KRW">한국(KRW)</option>
+                    <option value="JPY">일본(JPY)</option>
+                </select>
+            </div>
+            <div><label>환율 :</label> <span id="exchange_rate"></span> </div>
+            <div><label>송금액 :</label><span><input type="number" id="send_amount"></span>USD</div>
+            <div><button type="button" class="btn btn-primary btn-sm " onclick="getSendAmount()" >환율 계산</button></div>
+
+        </div>
+
+        <div id="receiveResult" class="col"  style=" margin-top : 1%">
+        </div>
+
+
+
+
+</div>
 
 
 
 
 
 
-<script
-        src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+
 <script type="text/javascript">
 
     $(document).ready(function exchange() {
@@ -230,7 +288,7 @@ console.log(v);
             dataType: "json",
 
             success: function (v) {
-                /* var depPlandTime = v.body.items[1].depPlandTime;
+                 var depPlandTime = v.body.items[1].depPlandTime;
                  var arrAirportNm = v.body.items[1].arrAirportNm;
                  var arrPlandTime = v.body.items[1].arrPlandTime;
                  var depAirportNm = v.body.items[1].depAirportNm;
@@ -242,7 +300,7 @@ console.log(v);
                  $("#vihicleId").text(vihicleId);
 
 
-                 */
+
                 console.log(v);
             }, error: function (e) {
 
@@ -255,6 +313,73 @@ console.log(v);
 
 </script>
 
+<script>
+    $('#send_amount').keypress(function (e) {
+        if (e.which === 13) {
+            getSendAmount();
+        }
+    });
+    function getExchangeRates(){
+        var receive_country = $('#receive_country').val();
+        console.log(receive_country);
+        if(receive_country === "dft"){
+            $('#exchange_rate').text("");
+            return;
+        }
+        $.ajax({
+            url : "/api/exchange-rates?receiveCountry=" + receive_country,
+            type : "GET",
+            success : function(res){
+                $('#exchange_rate').text(res + " " +receive_country + "/ USD");
+            },
+            error : function(err){
+                if(err.status === 400){
+                    alert("잘못 입력된 값 입니다.")
+                }else if(err.status === 500){
+                    alert("서버에 문제가 발생했습니다.")
+                }
+            }
+        })
+    }
+    function validCheck() {
+        var amount = $('#send_amount').val();
+        return (amount.length <= 0 || amount < 0 || amount > 10000);
+    }
 
+    function getSendAmount(){
+        var receivingCountry = $('#receive_country').val();
+        var sendAmount = $('#send_amount').val();
+        var inputData = {
+            "receiveCountry" : receivingCountry,
+            "sendAmount" : sendAmount
+        }
+        if (validCheck()) {
+            $('#receiveResult').html("<div class=\"alert alert-danger\"><p>송금액이 바르지 않습니다.송금액은 0 ~ 10000 사이의 수를 입력하세요</p></div>");
+            return;
+        }
+        var jsonData = JSON.stringify(inputData);
+        $.ajax({
+            url : "/api/exchange-rates",
+            data : jsonData,
+            type : "POST",
+            contentType : "application/json",
+            success : function (res) {
+                $('#receiveResult').html("<div class=\"alert alert-success\">" +
+                    "<p>수취금액은 " + res + " " + receivingCountry + " 입니다.</p>" +
+                    "</div>");
+            },
+            error : function(err){
+                if(err.status === 400){
+                    alert("잘못 입력된 값 입니다.")
+                }else if(err.status === 500){
+                    alert("서버에 문제가 발생했습니다.")
+                }
+            }
+        })
+    }
+</script>
 </body>
+<script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
 </html>

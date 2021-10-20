@@ -51,6 +51,17 @@ public class BoardInfoController {
         return "boardinfo/list.html";
     }
 
+    @GetMapping("lists")
+    public String indexlist(Long id, Model model,  @RequestParam(value="page", defaultValue = "1") Integer pageNum) {
+        List<BoardInfoDto> boardInfoList = boardInfoService.BoardInfolist(pageNum);
+        Integer[] pageInfoList = boardInfoService.getPageInfoList(pageNum);
+        model.addAttribute("boardInfoList1",boardInfoList);
+        model.addAttribute("pageInfoList1", pageInfoList);
+
+
+        return "home/index.html";
+    }
+
 
     @GetMapping("Infopost")
     public String post() {
@@ -63,7 +74,12 @@ public class BoardInfoController {
         log.info("문화관-일본어학습");
         return "culture/home2.html";
     }
-
+@GetMapping("/info/search")
+public String infosearch(@RequestParam(value = "keyword")String keyword, Model model){
+        List<BoardInfoDto> boardInfoDtoList2 = boardInfoService.searchPosts(keyword);
+        model.addAttribute("boardInfoList",boardInfoDtoList2);
+    return "boardinfo/list.html";
+}
 
     //파일업로드
     @PostMapping("Infopost")

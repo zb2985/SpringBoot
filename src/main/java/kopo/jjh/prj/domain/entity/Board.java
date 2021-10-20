@@ -42,19 +42,27 @@ public class Board {
 
     @LastModifiedDate
     private LocalDateTime modifiedDate;
-
+    @Column(length = 20, nullable = false)
+    private int categori;
     @Builder
-    public Board(Long id, String author, String title, String content, Long fileId , int hitCnt) {
+    public Board(Long id, String author, String title, String content, Long fileId , int hitCnt, int categori) {
         this.id = id;
         this.author = author;
         this.title = title;
         this.content = content;
         this.fileId = fileId;
         this.hitCnt = hitCnt;
+        this.categori = categori;
+
     }
+
+
 
     public void increaseViewCount() {
         this.hitCnt ++;
     }
 
-}
+
+
+    }
+

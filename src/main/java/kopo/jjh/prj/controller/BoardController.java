@@ -1,11 +1,11 @@
 package kopo.jjh.prj.controller;
 
-import kopo.jjh.prj.api.AirRestController;
 import kopo.jjh.prj.api.air.service.MainSService;
 import kopo.jjh.prj.api.service.MainService;
 import kopo.jjh.prj.dto.BoardDto;
 import kopo.jjh.prj.dto.FileDto;
 import kopo.jjh.prj.mapper.IUserService;
+import kopo.jjh.prj.redis.MyRedisService;
 import kopo.jjh.prj.security.domain.Account;
 import kopo.jjh.prj.security.domain.SimpleUserDAO;
 import kopo.jjh.prj.security.dto.AccountForm;
@@ -70,7 +70,7 @@ import java.util.*;
 public class BoardController {
     @Autowired
     SimpleUserDAO sud;
-   // private IMovieService movieService;
+    // private IMovieService movieService;
     private static final Logger logger = LogManager.getLogger(BoardController.class);
     @Autowired
     private kopo.jjh.prj.service.demoService demoService;
@@ -79,21 +79,21 @@ public class BoardController {
     private final AccountService accountService;    //회원가입 및 로그인
     private BoardService boardService;  //게시판
     private FileService fileService;    //파일업로드
-  //  private IMovieRankService movieRankService; //강의
-
+    //  private IMovieRankService movieRankService; //강의
+    private MyRedisService myRedisServcie;
     private String CLIENT_ID = "3_gqaAGqIO5b4lLHXhrD"; //애플리케이션 클라이언트 아이디값";
     private String CLI_SECRET = "DXqA0sX6q8"; //애플리케이션 클라이언트 시크릿값";
     private final String REDIRECT_URI = "http://localhost:8080/user/login/callback";
-      private IUserService userService;
+    private IUserService userService;
 
-    public BoardController(IUserService userService,AccountService accountService, BoardService boardService, FileService fileService ) {
-this.userService =userService;
+    public BoardController(IUserService userService,AccountService accountService, BoardService boardService, FileService fileService ,MyRedisService myRedisService) {
+        this.userService =userService;
         this.accountService = accountService;
         this.boardService = boardService;
         this.fileService = fileService;
-
-      //  this.movieService = movieService;
-     //   this.movieRankService = movieRankService;
+        this.myRedisServcie = myRedisServcie;
+        //  this.movieService = movieService;
+        //   this.movieRankService = movieRankService;
     }
 
 
@@ -114,7 +114,7 @@ this.userService =userService;
     public void emailConfirm(@ModelAttribute("form") AccountForm form, Model model) throws Exception {
         logger.info(form.getEmail() + ": auth confirmed");
         form.setAuthstatus(1);
-       accountService.updateAuthStatus(form);
+        accountService.updateAuthStatus(form);
         model.addAttribute("auth_check", 1);
 
     }
@@ -151,7 +151,7 @@ this.userService =userService;
 
     @RequestMapping("/naverlogin/{username}")
     public String loginWithoutForm(@PathVariable(value="username") String username) {
-    log.info("자동로그인");
+        log.info("자동로그인");
         String roleStr = "ROLE_" + sud.getRolesByusername(username).toUpperCase();
         List<GrantedAuthority> roles = new ArrayList<>(1);
         //String roleStr = username.equals("admin") ? "ROLE_ADMIN" : "ROLE_GUEST";
@@ -183,7 +183,7 @@ this.userService =userService;
     @GetMapping("loginUser")
     public String createUserForm(Model model) {
         //AccountForm ac=new AccountForm();
-       model.addAttribute("userForm", new AccountForm());
+        model.addAttribute("userForm", new AccountForm());
 
         //log.info("model:"+model.toString());
         log.info("회원가입페이지");
@@ -244,7 +244,7 @@ this.userService =userService;
             String origFilename = files.getOriginalFilename();
             String filename = new MD5Generator(origFilename).toString();
             /* 실행되는 위치의 'files' 폴더에 파일이 저장됩니다. */
-            String savePath = System.getProperty("user.dir") + "\\files";
+            String savePath = System.getProperty("/user/dir") + "\\files";
             /* 파일이 저장되는 폴더가 없으면 폴더를 생성합니다. */
             if (!new File(savePath).exists()) {
                 try {
@@ -305,7 +305,7 @@ this.userService =userService;
     @PreAuthorize("hasRole('admin')")
     @DeleteMapping("user/{username_no}")
     public String delete(@PathVariable("username_no") long username_no) {
-       accountService.delete(username_no);
+        accountService.delete(username_no);
 
 
         return "redirect:/userlist";
@@ -432,13 +432,13 @@ this.userService =userService;
 
 
 
-                Element theme = themess.get(0);
-                Element summary = summaryy.get(0);
-                JSONObject obj = new JSONObject();
+            Element theme = themess.get(0);
+            Element summary = summaryy.get(0);
+            JSONObject obj = new JSONObject();
 
-                obj.put("theme", themess.text());
-                obj.put("summary", summaryy.text());
-                arr.add(obj);
+            obj.put("theme", themess.text());
+            obj.put("summary", summaryy.text());
+            arr.add(obj);
 
 
             result.put("items", arr);     //items
@@ -490,7 +490,7 @@ this.userService =userService;
                 arr.add(obj);
 
             }
-                result.put("items", arr);     //items
+            result.put("items", arr);     //items
 
         } catch (IOException e) {
 
@@ -529,16 +529,7 @@ this.userService =userService;
         return "member/findpw";
     }
 
-    @RequestMapping(value="Crawl" ,method= RequestMethod.GET)
-    @ResponseBody
-    public void myRedisReecord5(HttpServletRequest request, HttpServletResponse response, AirRestController arc) throws Exception {
 
-        log.info(this.getClass().getName() + "myRedis Start16");
-
-
-        log.info(this.getClass().getName() + "myRedis end");
-
-    }
 
 
 
@@ -564,11 +555,11 @@ this.userService =userService;
 
     }
 
-@GetMapping("/login")
-public String login(){
+    @GetMapping("/login")
+    public String login(){
         log.info("로그인페이지");
-    return "user/login/login";
-}
+        return "user/login/login";
+    }
     @GetMapping("/book")
     public String oobks(){
         log.info("책장사");
@@ -639,33 +630,33 @@ public String login(){
      * @throws IOException
      * @throws ParseException
 
-    @RequestMapping("/user/login/callback")
-    public String naverCallback1(HttpSession session, HttpServletRequest request, Model model) throws IOException, ParseException {
-        String code = request.getParameter("code");
-        String state = request.getParameter("state");
-        String redirectURI = URLEncoder.encode("http://localhost:8080/user/login/callback", "UTF-8");
-        String apiURL;
-        apiURL = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&";
-        apiURL += "client_id=" + CLIENT_ID;
-        apiURL += "&client_secret=" + CLI_SECRET;
-        apiURL += "&redirect_uri=" + redirectURI;
-        apiURL += "&code=" + code;
-        apiURL += "&state=" + state;
-        System.out.println("apiURL=" + apiURL);
-        String res = requestToServer(apiURL);
-        if (res != null && !res.equals("")) {
-            model.addAttribute("res", res);
-            Map<String, Object> parsedJson = new JSONParser(res).parseObject();
-            System.out.println(parsedJson);
-            session.setAttribute("currentUser", res);
-            session.setAttribute("currentAT", parsedJson.get("access_token"));
-            session.setAttribute("currentRT", parsedJson.get("refresh_token"));
-        } else {
-            model.addAttribute("res", "Login failed!");
-        }
-        return "/user/login/callback";
-    }
-*/
+     @RequestMapping("/user/login/callback")
+     public String naverCallback1(HttpSession session, HttpServletRequest request, Model model) throws IOException, ParseException {
+     String code = request.getParameter("code");
+     String state = request.getParameter("state");
+     String redirectURI = URLEncoder.encode("http://localhost:8080/user/login/callback", "UTF-8");
+     String apiURL;
+     apiURL = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&";
+     apiURL += "client_id=" + CLIENT_ID;
+     apiURL += "&client_secret=" + CLI_SECRET;
+     apiURL += "&redirect_uri=" + redirectURI;
+     apiURL += "&code=" + code;
+     apiURL += "&state=" + state;
+     System.out.println("apiURL=" + apiURL);
+     String res = requestToServer(apiURL);
+     if (res != null && !res.equals("")) {
+     model.addAttribute("res", res);
+     Map<String, Object> parsedJson = new JSONParser(res).parseObject();
+     System.out.println(parsedJson);
+     session.setAttribute("currentUser", res);
+     session.setAttribute("currentAT", parsedJson.get("access_token"));
+     session.setAttribute("currentRT", parsedJson.get("refresh_token"));
+     } else {
+     model.addAttribute("res", "Login failed!");
+     }
+     return "/user/login/callback";
+     }
+     */
 
     @RequestMapping("/user/login/callback")
     public String naverCallback1(HttpSession session, HttpServletRequest request, Model model) throws IOException, ParseException {
@@ -687,7 +678,7 @@ public String login(){
             Map<String, Object> parsedJson = new JSONParser(res).parseObject();
             if(parsedJson.get("access_token") != null) {
 
-                // 
+                //
                 String infoStr = getProfileFromNaver(parsedJson.get("access_token").toString());
                 Map<String, Object> infoMap = new JSONParser(infoStr).parseObject();
                 log.info("access_token받음");
@@ -822,7 +813,7 @@ public String login(){
         String res = requestToServer(apiURL);
         model.addAttribute("res", res);
         session.invalidate();
-        return "/user/login/callback";
+        return "user/login/callback";
     }
 
     /**
@@ -930,10 +921,15 @@ public String login(){
     @GetMapping("/")
     public String index() {
 
-        return "home/index.html";
+        return "redirect:/lists";
 
+    }
+    @GetMapping("/search")
+    public String infosearch(@RequestParam(value = "keyword")String keyword, Model model){
+        List<BoardDto> boardInfoDtoList1 = boardService.searchPosts1(keyword);
+        model.addAttribute("boardList",boardInfoDtoList1);
+        return "board/list.html";
     }
 
 
 }
-

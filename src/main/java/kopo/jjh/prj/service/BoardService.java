@@ -32,7 +32,7 @@ public class BoardService {
     @Transactional
     public List<BoardDto> Boardlist(Integer pageNum) {
 
-      Page<Board> page = boardRepository.findAll(PageRequest.of(pageNum - 1, PAGE_POST_COUNT, Sort.by(Sort.Direction.ASC, "createdDate")));
+      Page<Board> page = boardRepository.findAll(PageRequest.of(pageNum - 1, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, "categori")));
         List<Board> boardList = page.getContent();
         List<BoardDto> boardDtoList = new ArrayList<>();
         for(Board board : boardList) {
@@ -43,6 +43,7 @@ public class BoardService {
                     .content(board.getContent())
                     .hitCnt(board.getHitCnt())
                     .createdDate(board.getCreatedDate())
+                    .categori(board.getCategori())
                     .build();
             boardDtoList.add(boardDto);
         }
@@ -91,6 +92,7 @@ public class BoardService {
                 .content(board.getContent())
                 .fileId(board.getFileId())
                 .createdDate(board.getCreatedDate())
+                .categori(board.getCategori())
                 .build();
 
         board.increaseViewCount();
@@ -117,6 +119,27 @@ public class BoardService {
         return boardmapper.boardListCnt();
     }
 
+    @Transactional
+    public List<BoardDto> searchPosts1(String keyword) {
+        List<Board> board1 = boardRepository.findByTitleContaining(keyword);
+        List<BoardDto>Boardlist = new ArrayList<>();
+        if (board1.isEmpty()) return Boardlist;
+        for (Board board : board1) {
+            Boardlist.add(this.convert(board));
+        }
+        return Boardlist;
+    }
 
+    private BoardDto convert(Board board){
+        return BoardDto.builder()
+                .id(board.getId())
+                .author(board.getAuthor())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .hitCnt(board.getHitCnt())
+                .createdDate(board.getCreatedDate())
+                .build();
+
+    }
 
 }

@@ -22,6 +22,8 @@
     <table class="table">
         <thead class="thead-light">
         <tr class="text-center">
+            <!--공지-->
+            <th scope="col"></th>
             <th scope="col">#</th>
             <th scope="col">제목</th>
             <th scope="col">작성자</th>
@@ -31,6 +33,9 @@
         </thead>
         <tbody>
         <tr class="text-center" th:each="post : ${boardList}">
+            <th scope="row">
+                <span th:if="${post.categori.toString().equals('1')}">공지사항</span>
+            </th>
             <th scope="row">
                 <span th:text="${post.id}"></span>
             </th>
@@ -60,7 +65,14 @@
         <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
 
     </div>
+    <form action="/search" method="GET">
+        <div class="search">
+            <input name="keyword" type="text" placeholder="검색어를 입력해주세요">
 
+        </div>
+
+        <button>검색하기</button>
+    </form>
     <div>
     <span th:each="pageNum : ${pageList}" >
         <a th:href="@{'/list?page=' + ${pageNum}}">[[${pageNum}]]</a>
@@ -68,7 +80,9 @@
     </div>
 
 </div>
+
 <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </body>
+
 </html>

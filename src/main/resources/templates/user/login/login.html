@@ -34,9 +34,21 @@
             <strong>문화관</strong>
         </a>
 
-        <a th:href="@{/chatting}">실시간채팅방</a>
-        <a th:href="@{/travel}">여행정보</a>
-        <a th:href="@{/book}">교재</a>
+        <a href="/travel" class="navbar-brand d-flex align-items-center">
+            <strong>여행정보</strong>
+            <a href="/chatting" class="navbar-brand d-flex align-items-center">
+                <strong>실시간채팅방</strong>
+            </a>
+            <a href="/culture" class="navbar-brand d-flex align-items-center">
+                <strong>문화관</strong>
+            </a>
+
+
+        </a>
+        <a href="/book" class="navbar-brand d-flex align-items-center">
+            <strong>교재</strong>
+        </a>
+
 
 
 
@@ -65,14 +77,8 @@
         <a href="/member/findpw" class="navbar-brand d-flex align-items-center">
             <strong>비밀번호찾기</strong>
         </a>
-        <div th:if="${session.currentUser ne null}">
-            <h3>이 부분은 로그인한 사용자한테만 보임</h3>
-            <pre th:text="${session.currentUser}"></pre>
-            <a th:href="${'/naver/getProfile?accessToken=' + session.currentAT}">Get User's Profile</a>
-            <a th:href="${'/naver/refreshToken?refreshToken=' + session.currentRT}">Refresh Token</a>
-            <a th:href="${'/naver/deleteToken?accessToken=' + session.currentAT}">Delete Token</a>
-            <a href="/naver/invalidate">로그아웃 (Invalidate Session)</a>
-        </div>
+
+
         <!-- 네이버아이디로로그인 버튼 노출 영역 -->
         <div id="naver_id_login"></div>
 
@@ -84,10 +90,10 @@
 
 <!-- //네이버아이디로로그인 버튼 노출 영역 -->
 <script type="text/javascript">
-    var naver_id_login = new naver_id_login("3_gqaAGqIO5b4lLHXhrD", "http://13.209.101.60:8080/user/login/callback");
+    var naver_id_login = new naver_id_login("3_gqaAGqIO5b4lLHXhrD", "http://localhost:8080/user/login/callback");
     var state = naver_id_login.getUniqState();
     naver_id_login.setButton("white", 2,40);
-    naver_id_login.setDomain("http://13.209.101.60:8080/user/login/login");
+    naver_id_login.setDomain("http://localhost:8080/user/login/login");
     naver_id_login.setState(state);
 
     naver_id_login.init_naver_id_login();

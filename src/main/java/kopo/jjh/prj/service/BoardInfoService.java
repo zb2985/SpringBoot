@@ -20,6 +20,9 @@ public class BoardInfoService {
     private static final int BLOCK_PAGE_NUM_COUNT = 9;
     private static final int PAGE_POST_COUNT = 10;
     private BoardInfomapper boardmapper;
+
+
+
     public BoardInfoService(InfoRepository infoRepository) {
         this.infoRepository = infoRepository;
     }
@@ -33,8 +36,12 @@ public class BoardInfoService {
     public List<BoardInfoDto> BoardInfolist(Integer pageNum) {
 
         Page<BoardInfo> page = infoRepository.findAll(PageRequest.of(pageNum - 1, PAGE_POST_COUNT, Sort.by(Sort.Direction.ASC, "createdDate")));
+
         List<BoardInfo> boardInfoList = page.getContent();
         List<BoardInfoDto> boardInfoDtoList = new ArrayList<>();
+
+
+
         for(BoardInfo boardInfo : boardInfoList) {
             BoardInfoDto boardInfoDto = BoardInfoDto.builder()
                     .id(boardInfo.getId())
@@ -43,6 +50,7 @@ public class BoardInfoService {
                     .content(boardInfo.getContent())
                     .hitCnt(boardInfo.getHitCnt())
                     .createdDate(boardInfo.getCreatedDate())
+
                     .build();
             boardInfoDtoList.add(boardInfoDto);
         }
@@ -91,6 +99,7 @@ public class BoardInfoService {
                 .content(boardInfo.getContent())
                 .fileId(boardInfo.getFileId())
                 .createdDate(boardInfo.getCreatedDate())
+
                 .build();
 
         boardInfo.increaseViewCount();
@@ -117,6 +126,26 @@ public class BoardInfoService {
         return boardmapper.boardInfoListCnt();
     }
 
+    @Transactional
+    public List<BoardInfoDto> searchPosts(String keyword) {
+        List<BoardInfo> boardinfo = infoRepository.findByTitleContaining(keyword);
+        List<BoardInfoDto> boardInfoDtoList = new ArrayList<>();
+        if (boardinfo.isEmpty()) return boardInfoDtoList;
+        for (BoardInfo boardInfo : boardinfo) {
+            boardInfoDtoList.add(this.convert(boardInfo));
+        }
+        return boardInfoDtoList;
+    }
 
+    private BoardInfoDto convert(BoardInfo boardInfo){
+        return BoardInfoDto.builder()
+                .id(boardInfo.getId())
+                .author(boardInfo.getAuthor())
+                .title(boardInfo.getTitle())
+                .content(boardInfo.getContent())
+                .hitCnt(boardInfo.getHitCnt())
+                .createdDate(boardInfo.getCreatedDate())
+                .build();
 
+    }
 }

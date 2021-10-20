@@ -1,6 +1,8 @@
 package kopo.jjh.prj.mapper;
 
+import kopo.jjh.prj.domain.repository.AccountRepository;
 import kopo.jjh.prj.mapper.impl.UserDAOImpl;
+import kopo.jjh.prj.security.domain.Account;
 import kopo.jjh.prj.security.dto.AccountForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +58,16 @@ public class UserServiceImpl implements IUserService{
             return null;
         } else {
             return username;
+        }
+    }
+    public boolean userEmailCheck(String email, String name) {
+
+        Account user = AccountRepository.findUserByUsername(email);
+        if(user!=null && user.getName().equals(name)) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
 }

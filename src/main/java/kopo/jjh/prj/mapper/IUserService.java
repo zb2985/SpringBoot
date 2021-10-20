@@ -17,5 +17,5 @@ public interface IUserService {
     void updatePassword(AccountForm vo);
 
     public String find_id(HttpServletResponse response, String email) throws Exception ;
-
+    public boolean userEmailCheck(String email, String name) ;
 }

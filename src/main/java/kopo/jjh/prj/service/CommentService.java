@@ -28,11 +28,16 @@ public class CommentService {
 
         return mCommentMapper.commentUpdate(comment);
     }
+    public int recommendupdate(CommentVO comment) throws Exception{
+
+        return mCommentMapper.recommendupdate(comment);
+    }
 
     public int commentDeleteService(int cno) throws Exception{
 
         return mCommentMapper.commentDelete(cno);
     }
+
 }
 
 
